@@ -1,114 +1,91 @@
-set t_Co=256
-autocmd FileType c,cpp,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" General Settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Color settings
 colorscheme kolor
-let java_highlight_all=1
-set cc=+1
-set textwidth=80
+set t_Co=256
 syntax on
 set bg=dark
-set ruler                     " show the line number on the bar
-set more                      " use more prompt
-set autoread                  " watch for file changes
-set number                    " line numbers
+
+" Local Leader
+let maplocalleader=','        " All my macros start with ,
+
+" Display
+set cc=+1
+set textwidth=100
+set ruler                     " Show the line number on the bar
+set more                      " Use more prompt
+set autoread                  " Watch for file changes
+set number                    " Line numbers
 set hidden
-set noautowrite               " don't automagically write on :next
-set lazyredraw                " don't redraw when don't have to
+set noautowrite               " Don't automagically write on :next
+set lazyredraw                " Don't redraw when don't have to
 set showmode
 set showcmd
-set nocompatible              " vim, not vi
+set nocompatible              " Vim, not vi
+
+" Scrolling
+set sidescrolloff=5           " Keep at least 5 lines left/right
+set scrolloff=5               " Keep at least 5 lines above/below
+
+" Tab settings
 set smarttab
-set autoindent 		          " auto/smart indent
+set autoindent                " Auto/smart indent
 set shiftwidth=2
-set tabstop=4
-set softtabstop=4
+set tabstop=2
+set softtabstop=2
 set expandtab
-set scrolloff=5               " keep at least 5 lines above/below
-set sidescrolloff=5           " keep at least 5 lines left/right
-set history=200
-set backspace=indent,eol,start
-set linebreak
-set cmdheight=2               " command line two lines high
-set undolevels=1000           " 1000 undos
-set updatecount=100           " switch every 100 chars
-set complete=.,w,b,u,U,t,i,d  " do lots of scanning on tab completion
-set ttyfast                   " we have a fast terminal
-set noerrorbells              " No error bells please
+
+" Clipboard
 set clipboard=unnamed
 set fileformats=unix
 set ff=unix
-filetype on                   " Enable filetype 
+
+" Filetypes
+filetype on                   " Enable filetype
 filetype indent on            " Enable filetype-specific indenting
 filetype plugin on            " Enable filetype-specific plugins
-set wildmenu                  " menu has tab completion
-let maplocalleader=','        " all my macros start with ,
+set wildmenu                  " Menu has tab completion
 set laststatus=2
 set list listchars=tab:\ \ ,trail:·
+autocmd FileType c,cpp,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
+autocmd BufNewFile,BufRead * setlocal formatoptions+=t
 
-"  searching
-set incsearch                 " incremental search
-nmap \q :nohlsearch<CR>
-set ignorecase                " search ignoring case
-set hlsearch                  " highlight the search
-set showmatch                 " show matching bracket
-set diffopt=filler,iwhite     " ignore all whitespace and sync
+"  Searching
+set incsearch                 " Incremental search
+set ignorecase                " Search ignoring case
+set hlsearch                  " Highlight the search
+set showmatch                 " Show matching bracket
+set diffopt=filler,iwhite     " Ignore all whitespace and sync
 
-" spelling
+" Misc settings
+set history=200
+set backspace=indent,eol,start
+set linebreak
+set cmdheight=1               " Command line two lines high
+set undolevels=1000           " 1000 undos
+set updatecount=100           " Switch every 100 chars
+set complete=.,w,b,u,U,t,i,d  " Do lots of scanning on tab completion
+set ttyfast                   " We have a fast terminal
+set noerrorbells              " No error bells please
+set virtualedit=onemore
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Useful commands and mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Unhighlight
+nmap <LocalLeader>q :nohlsearch<CR>
+
+" Spelling
 if v:version >= 700
    " Enable spell check for text files
    autocmd BufNewFile,BufRead *.txt setlocal spell spelllang=en
 endif
 
-" mappings
-" toggle list mode
-nmap <LocalLeader>tl :set list!<cr>
-" toggle paste mode
-nmap <LocalLeader>pp :set paste!<cr>
-
-" pathogen
-execute pathogen#infect()
-
-" tab autocomplete
-function! Tab_Or_Complete()
-   if col('.')>1 && strpart( getline('.'), col('.')-2, 3 ) =~ '^\w'
-    return "\<C-N>"
-   else
-    return "\<Tab>"
-   endif
-endfunction
-inoremap <Tab> <C-R>=Tab_Or_Complete()<CR>
-set dictionary="/usr/dict/words"
-
-nmap j gj
-nmap k gk
-vmap j gj
-vmap k gk
-autocmd BufNewFile,BufRead * setlocal formatoptions+=t
-set virtualedit=onemore
-
-" control P
-set runtimepath^=~/.vim/bundle/ctrlp.vim
-set wildignore=*.class,*.o,*.info,*.swp
-nnoremap <LocalLeader>d :CtrlPClearCache<CR>
-
-" easy-motion
-map <LocalLeader> <Plug>(easymotion-prefix)
-
-" ctags
-set tags=tags;/
-nnoremap <LocalLeader>. :CtrlPTag<CR>
-
-" NERDComment
-map ,c :TComment<cr>
-
-" Syntastic
-nnoremap <LocalLeader>s :SyntasticToggleMode<CR>
-
-" Ag
-nnoremap <LocalLeader>a :Ag!<Space>
-
 " Remove insert delay
 if !has('gui_running')
-    set ttimeoutlen=10
+    set ttimeoutlen=40
     augroup FastEscape
         autocmd!
         au InsertEnter * set timeoutlen=100
@@ -116,8 +93,87 @@ if !has('gui_running')
     augroup END
 endif
 
-" exiting insert mode
+" Exiting insert mode
 imap jk <Esc>
 
-" update buffer after switching branches
+" Search word under cursor
+nnoremap <LocalLeader>s *
+
+" Update buffer
 nnoremap <LocalLeader>r :checktime<CR>
+
+" Toggle list mode
+nmap <LocalLeader>tl :set list!<cr>
+
+" Toggle paste mode
+nmap <LocalLeader>pp :set paste!<cr>
+
+" Move single lines
+nmap j gj
+nmap k gk
+vmap j gj
+vmap k gk
+
+" :(
+:command! WQ wq
+:command! Wq wq
+:command! W w
+:command! Q q
+
+" Source vimrc
+nnoremap <LocalLeader>v :so ~/.vimrc<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Pathogen
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+execute pathogen#infect()
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" CtrlP
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+set wildignore=*.class,*.o,*.info,*.swp
+nnoremap <LocalLeader>d :CtrlPClearCache<CR>
+set tags=tags;/
+nnoremap <LocalLeader>. :CtrlPTag<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Easy Motion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <LocalLeader> <Plug>(easymotion-prefix)
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" TComment
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <LocalLeader>c :TComment<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Ag
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <LocalLeader>a :Ag!<Space>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim-go
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+au Filetype go nnoremap <LocalLeader>v :vsp <CR>:exe "GoDef"<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" NERDTree
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+nnoremap <C-n> :NERDTreeToggle<CR>
+nnoremap <LocalLeader>m :NERDTreeFind<CR>
+let g:NERDTreeWinSize = 50
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" DelimitMate
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:delimitMate_expand_cr = 2
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" YouCompleteMe
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_min_num_of_chars_for_completion = 4
+let g:ycm_min_num_identifier_candidate_chars = 4
+nnoremap <LocalLeader>f :YcmCompleter GoToDefinitionElseDeclaration<CR>
