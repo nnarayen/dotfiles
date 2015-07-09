@@ -1,4 +1,33 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vundle
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible              " Required for vundle
+filetype off                  " Required for vundle
+
+" Start vundle
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" Plugins
+Plugin 'gmarik/Vundle.vim'
+Plugin 'vim-scripts/AutoTag'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'rking/ag.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'Raimondi/delimitMate'
+Plugin 'scrooloose/nerdtree'
+Plugin 'tomtom/tcomment_vim'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'tpope/vim-fugitive'
+Plugin 'fatih/vim-go'
+Plugin 'powerline/powerline'
+Plugin 'christoomey/vim-tmux-navigator'
+
+" End vundle
+call vundle#end()            " Required for vundle
+filetype plugin indent on    " Required for vundle
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " General Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Color settings
@@ -12,7 +41,6 @@ let maplocalleader=','        " All my macros start with ,
 
 " Display
 set cc=+1
-set textwidth=100
 set ruler                     " Show the line number on the bar
 set more                      " Use more prompt
 set autoread                  " Watch for file changes
@@ -51,7 +79,11 @@ set list listchars=tab:\ \ ,trail:·
 autocmd FileType c,cpp,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
 autocmd BufNewFile,BufRead * setlocal formatoptions+=t
 
-"  Searching
+" Java specifics
+autocmd BufNewFile,BufReadPre *.java setlocal textwidth=100
+let java_highlight_all=1
+
+" Searching
 set incsearch                 " Incremental search
 set ignorecase                " Search ignoring case
 set hlsearch                  " Highlight the search
@@ -121,7 +153,7 @@ vmap k gk
 :command! Q q
 
 " Source vimrc
-nnoremap <LocalLeader>v :so ~/.vimrc<CR>
+nnoremap <LocalLeader>g :so ~/.vimrc<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Pathogen
@@ -174,6 +206,5 @@ let g:delimitMate_expand_cr = 2
 " YouCompleteMe
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_min_num_of_chars_for_completion = 4
-let g:ycm_min_num_identifier_candidate_chars = 4
-nnoremap <LocalLeader>f :YcmCompleter GoToDefinitionElseDeclaration<CR>
+let g:ycm_min_num_of_chars_for_completion = 3
+let g:ycm_min_num_identifier_candidate_chars = 3
