@@ -20,8 +20,12 @@ Plugin 'tomtom/tcomment_vim'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'tpope/vim-fugitive'
 Plugin 'fatih/vim-go'
-Plugin 'powerline/powerline'
+Plugin 'Lokaltog/vim-powerline'
 Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'Glench/Vim-Jinja2-Syntax'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-sleuth'
+Plugin 'burke/matcher'
 
 " End vundle
 call vundle#end()            " Required for vundle
@@ -56,14 +60,6 @@ set nocompatible              " Vim, not vi
 set sidescrolloff=5           " Keep at least 5 lines left/right
 set scrolloff=5               " Keep at least 5 lines above/below
 
-" Tab settings
-set smarttab
-set autoindent                " Auto/smart indent
-set shiftwidth=2
-set tabstop=2
-set softtabstop=2
-set expandtab
-
 " Clipboard
 set clipboard=unnamed
 set fileformats=unix
@@ -89,6 +85,25 @@ set ignorecase                " Search ignoring case
 set hlsearch                  " Highlight the search
 set showmatch                 " Show matching bracket
 set diffopt=filler,iwhite     " Ignore all whitespace and sync
+set autoindent
+set tabstop=2
+set softtabstop=2
+
+" Vim splits
+set splitbelow                " Open split to right / bottom
+set splitright
+
+" Search word under cursor
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+" Window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" File switching
+nnoremap <LocalLeader><LocalLeader> <c-^>
 
 " Misc settings
 set history=200
@@ -126,7 +141,7 @@ if !has('gui_running')
 endif
 
 " Exiting insert mode
-imap jk <Esc>
+inoremap jk <Esc>
 
 " Search word under cursor
 nnoremap <LocalLeader>s *
@@ -156,11 +171,6 @@ vmap k gk
 nnoremap <LocalLeader>g :so ~/.vimrc<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-" Pathogen
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-execute pathogen#infect()
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " CtrlP
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -168,6 +178,35 @@ set wildignore=*.class,*.o,*.info,*.swp
 nnoremap <LocalLeader>d :CtrlPClearCache<CR>
 set tags=tags;/
 nnoremap <LocalLeader>. :CtrlPTag<CR>
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll|class)$',
+  \ }
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Matcher
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+if executable('matcher')
+  let g:ctrlp_match_func = { 'match': 'GoodMatch' }
+
+  function! GoodMatch(items, str, limit, mmode, ispath, crfile, regex)
+    let cachefile = ctrlp#utils#cachedir().'/matcher.cache'
+    if !( filereadable(cachefile) && a:items == readfile(cachefile) )
+      call writefile(a:items, cachefile)
+    endif
+    if !filereadable(cachefile)
+      return []
+    endif
+
+    let cmd = 'matcher --limit '.a:limit.' --manifest '.cachefile.' '
+    if !( exists('g:ctrlp_dotfiles') && g:ctrlp_dotfiles )
+      let cmd = cmd.'--no-dotfiles '
+    endif
+    let cmd = cmd.a:str
+
+    return split(system(cmd), "\n")
+  endfunction
+end
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Easy Motion
@@ -183,6 +222,12 @@ map <LocalLeader>c :TComment<cr>
 " Ag
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 nnoremap <LocalLeader>a :Ag!<Space>
+
+if executable('ag')
+  set grepprg=ag\ --nogroup\ --nocolor    " Use ag over grep
+  let g:ctrlp_use_caching = 0             " CtrlP doesn't need to cache
+  let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-go
@@ -208,3 +253,5 @@ let g:delimitMate_expand_cr = 2
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_min_num_of_chars_for_completion = 3
 let g:ycm_min_num_identifier_candidate_chars = 3
+let g:ycm_add_preview_to_completeopt = 0
+set completeopt-=preview
