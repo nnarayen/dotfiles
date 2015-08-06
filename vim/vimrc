@@ -13,19 +13,20 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'vim-scripts/AutoTag'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'rking/ag.vim'
-Plugin 'kien/ctrlp.vim'
 Plugin 'Raimondi/delimitMate'
 Plugin 'scrooloose/nerdtree'
+Plugin 'kien/ctrlp.vim'
 Plugin 'tomtom/tcomment_vim'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'tpope/vim-fugitive'
 Plugin 'fatih/vim-go'
-Plugin 'Lokaltog/vim-powerline'
 Plugin 'christoomey/vim-tmux-navigator'
 Plugin 'Glench/Vim-Jinja2-Syntax'
 Plugin 'airblade/vim-gitgutter'
-Plugin 'tpope/vim-sleuth'
 Plugin 'burke/matcher'
+Plugin 'bling/vim-airline'
+Plugin 'edkolev/tmuxline.vim'
+Plugin 'ciaranm/detectindent'
 
 " End vundle
 call vundle#end()            " Required for vundle
@@ -88,22 +89,11 @@ set diffopt=filler,iwhite     " Ignore all whitespace and sync
 set autoindent
 set tabstop=2
 set softtabstop=2
+set expandtab
 
 " Vim splits
 set splitbelow                " Open split to right / bottom
 set splitright
-
-" Search word under cursor
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
-
-" Window movement
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
-" File switching
-nnoremap <LocalLeader><LocalLeader> <c-^>
 
 " Misc settings
 set history=200
@@ -170,6 +160,18 @@ vmap k gk
 " Source vimrc
 nnoremap <LocalLeader>g :so ~/.vimrc<CR>
 
+" Search directory for word under cursor
+nnoremap S :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+
+" Window movement
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+
+" File switching
+nnoremap <LocalLeader><LocalLeader> <c-^>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " CtrlP
 """""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -216,7 +218,7 @@ map <LocalLeader> <Plug>(easymotion-prefix)
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " TComment
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-map <LocalLeader>c :TComment<cr>
+map <LocalLeader>c :TComment<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Ag
@@ -255,3 +257,28 @@ let g:ycm_min_num_of_chars_for_completion = 3
 let g:ycm_min_num_identifier_candidate_chars = 3
 let g:ycm_add_preview_to_completeopt = 0
 set completeopt-=preview
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Airline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+set encoding=utf-8
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tagbar#enabled = 0
+let g:airline#extensions#branch#empty_message = ''
+let g:airline#extensions#tmuxline#enabled = 0
+let g:airline#extensions#bufferline#enabled = 0
+let g:airline#extensions#csv#enabled = 0
+let g:airline#extensions#virtualenv#enabled = 0
+let g:airline#extensions#eclim#enabled = 0
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Tmuxline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:tmuxline_theme = 'zenburn'
+let g:tmuxline_preset = 'nikhil'
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" DetectIndent
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:detectindent_preferred_indent = 2
+autocmd BufReadPost * :DetectIndent
