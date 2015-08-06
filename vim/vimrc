@@ -10,7 +10,6 @@ call vundle#begin()
 
 " Plugins
 Plugin 'gmarik/Vundle.vim'
-Plugin 'vim-scripts/AutoTag'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'rking/ag.vim'
 Plugin 'Raimondi/delimitMate'
@@ -25,8 +24,10 @@ Plugin 'Glench/Vim-Jinja2-Syntax'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'burke/matcher'
 Plugin 'bling/vim-airline'
-Plugin 'edkolev/tmuxline.vim'
 Plugin 'ciaranm/detectindent'
+Plugin 'tpope/vim-rails'
+Plugin 'vim-ruby/vim-ruby'
+Plugin 'tpope/vim-endwise'
 
 " End vundle
 call vundle#end()            " Required for vundle
@@ -240,14 +241,23 @@ au Filetype go nnoremap <LocalLeader>v :vsp <CR>:exe "GoDef"<CR>
 " NERDTree
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-nnoremap <C-n> :NERDTreeToggle<CR>
-nnoremap <LocalLeader>m :NERDTreeFind<CR>
+nnoremap <LocalLeader>m :call NerdTreeToggle()<CR>
 let g:NERDTreeWinSize = 50
+
+" Smart Toggle
+function! NerdTreeToggle()
+  if exists("b:NERDTreeType")
+    NERDTreeToggle
+  else
+    NERDTreeFind
+  endif
+endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " DelimitMate
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:delimitMate_expand_cr = 2
+let g:delimitMate_expand_cr = 1
+let g:delimitMate_jump_expansion = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " YouCompleteMe
@@ -256,6 +266,9 @@ let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_min_num_of_chars_for_completion = 3
 let g:ycm_min_num_identifier_candidate_chars = 3
 let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_filetype_specific_completion_to_disable = { 'ruby': 1 }
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
 set completeopt-=preview
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -282,3 +295,11 @@ let g:tmuxline_preset = 'nikhil'
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:detectindent_preferred_indent = 2
 autocmd BufReadPost * :DetectIndent
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim Ruby
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd FileType ruby,eruby setlocal omnifunc=rubycomplete#Complete
+autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
+autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
+autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
