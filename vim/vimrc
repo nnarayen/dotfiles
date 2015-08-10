@@ -21,11 +21,12 @@ Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-fugitive'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'airblade/vim-gitgutter'
-Plug 'burke/matcher'
+Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'bling/vim-airline'
 Plug 'ciaranm/detectindent'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-surround'
+Plug 'scrooloose/syntastic'
 
 " Language specific plugins
 Plug 'tpope/vim-rails',                  { 'for': 'ruby' }
@@ -74,8 +75,6 @@ set ff=unix
 
 " Filetypes
 filetype on                   " Enable filetype
-filetype indent on            " Enable filetype-specific indenting
-filetype plugin on            " Enable filetype-specific plugins
 set wildmenu                  " Menu has tab completion
 set laststatus=2
 set list listchars=tab:\ \ ,trail:·
@@ -169,6 +168,12 @@ nnoremap <LocalLeader>g :so ~/.vimrc<CR>
 " Search directory for word under cursor
 nnoremap S :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
+" Delete current buffer
+nnoremap <LocalLeader>d :bd<CR>
+
+" Cycle through buffers
+nnoremap <LocalLeader>b :bn<CR>
+
 " Window movement
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -181,40 +186,19 @@ nnoremap <LocalLeader><LocalLeader> <c-^>
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " CtrlP
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-set runtimepath^=~/.vim/bundle/ctrlp.vim
 set wildignore=*.class,*.o,*.info,*.swp
-nnoremap <LocalLeader>d :CtrlPClearCache<CR>
 set tags=tags;/
 nnoremap <LocalLeader>. :CtrlPTag<CR>
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
   \ 'file': '\v\.(exe|so|dll|class)$',
-  \ }
+\ }
+nnoremap <LocalLeader>f :CtrlPBuffer<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-" Matcher
+" PyMatcher
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-if executable('matcher')
-  let g:ctrlp_match_func = { 'match': 'GoodMatch' }
-
-  function! GoodMatch(items, str, limit, mmode, ispath, crfile, regex)
-    let cachefile = ctrlp#utils#cachedir().'/matcher.cache'
-    if !( filereadable(cachefile) && a:items == readfile(cachefile) )
-      call writefile(a:items, cachefile)
-    endif
-    if !filereadable(cachefile)
-      return []
-    endif
-
-    let cmd = 'matcher --limit '.a:limit.' --manifest '.cachefile.' '
-    if !( exists('g:ctrlp_dotfiles') && g:ctrlp_dotfiles )
-      let cmd = cmd.'--no-dotfiles '
-    endif
-    let cmd = cmd.a:str
-
-    return split(system(cmd), "\n")
-  endfunction
-end
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Easy Motion
@@ -279,16 +263,16 @@ set completeopt-=preview
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Airline
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-set encoding=utf-8
 let g:airline_theme = 'bubblegum'
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tagbar#enabled = 0
-let g:airline#extensions#branch#empty_message = ''
+let g:airline#extensions#branch#empty_message = 'local'
 let g:airline#extensions#tmuxline#enabled = 0
-let g:airline#extensions#bufferline#enabled = 0
-let g:airline#extensions#csv#enabled = 0
-let g:airline#extensions#virtualenv#enabled = 0
-let g:airline#extensions#eclim#enabled = 0
+
+" Tabline configuration
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#show_tab_type = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tmuxline
@@ -309,3 +293,17 @@ autocmd FileType ruby,eruby setlocal omnifunc=rubycomplete#Complete
 autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
 autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
 autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Syntastic
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_mode_map = {
+  \ "mode": "active",
+  \ "passive_filetypes": ["java"]
+\ }
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim-Rails
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+au Filetype ruby nnoremap gd gf
