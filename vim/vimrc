@@ -11,8 +11,9 @@ call plug#begin('~/.vim/bundle/')
 
 " Plugins
 Plug 'gmarik/Vundle.vim'
-Plug 'Valloric/YouCompleteMe',           { 'do': function('BuildYCM') }
-Plug 'rking/ag.vim',                     { 'on': 'Ag' }
+Plug 'Valloric/YouCompleteMe',  { 'do' : function('BuildYCM') }
+Plug 'rking/ag.vim',            { 'on' : 'Ag' }
+Plug 'junegunn/vim-easy-align'
 Plug 'Raimondi/delimitMate'
 Plug 'scrooloose/nerdtree'
 Plug 'kien/ctrlp.vim'
@@ -23,17 +24,19 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'airblade/vim-gitgutter'
 Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'bling/vim-airline'
-Plug 'ciaranm/detectindent'
 Plug 'tpope/vim-endwise'
-Plug 'tpope/vim-surround'
-Plug 'scrooloose/syntastic'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'tpope/vim-sleuth'
+Plug 'yssl/QFEnter'
+Plug 'ConradIrwin/vim-bracketed-paste'
 
 " Language specific plugins
-Plug 'tpope/vim-rails',                  { 'for': 'ruby' }
-Plug 'vim-ruby/vim-ruby',                { 'for': 'ruby' }
-Plug 'LaTeX-Box-Team/LaTeX-Box',         { 'for': 'tex' }
-Plug 'fatih/vim-go',                     { 'for': 'go' }
-Plug 'Glench/Vim-Jinja2-Syntax',         { 'for': 'jinja' }
+Plug 'tpope/vim-rails',          { 'for' : 'ruby'  }
+Plug 'LaTeX-Box-Team/LaTeX-Box', { 'for' : 'tex'   }
+Plug 'fatih/vim-go',             { 'for' : 'go'    }
+Plug 'Glench/Vim-Jinja2-Syntax', { 'for' : 'jinja' }
+Plug 'slim-template/vim-slim',   { 'for' : 'slim'  }
 
 " End plug
 call plug#end()
@@ -73,28 +76,35 @@ set clipboard=unnamed
 set fileformats=unix
 set ff=unix
 
+" Indenting
+set tabstop=4
+set softtabstop=4
+
 " Filetypes
 filetype on                   " Enable filetype
 set wildmenu                  " Menu has tab completion
 set laststatus=2
 set list listchars=tab:\ \ ,trail:·
-autocmd FileType c,cpp,java,php autocmd BufWritePre <buffer> :%s/\s\+$//e
 autocmd BufNewFile,BufRead * setlocal formatoptions+=t
 
 " Java specifics
 autocmd BufNewFile,BufReadPre *.java setlocal textwidth=100
 let java_highlight_all=1
 
+" Tex Line Width
+autocmd BufNewFile,BufReadPre *.tex setlocal textwidth=80
+
+" Ruby Line Width
+autocmd BufNewFile,BufReadPre *.rb,*.rake setlocal textwidth=100
+
 " Searching
 set incsearch                 " Incremental search
 set ignorecase                " Search ignoring case
+set smartcase                 " Case sensitive for uppercase
 set hlsearch                  " Highlight the search
 set showmatch                 " Show matching bracket
 set diffopt=filler,iwhite     " Ignore all whitespace and sync
 set autoindent
-set tabstop=2
-set softtabstop=2
-set expandtab
 
 " Vim splits
 set splitbelow                " Open split to right / bottom
@@ -111,6 +121,21 @@ set complete=.,w,b,u,U,t,i,d  " Do lots of scanning on tab completion
 set ttyfast                   " We have a fast terminal
 set noerrorbells              " No error bells please
 set virtualedit=onemore
+
+" QuickFix window mappings
+autocmd! FileType qf nnoremap <buffer> q :cclose<CR>
+
+" Kill any trailing whitespace on save (Credit to Facebook)
+function! <SID>StripTrailingWhitespaces()
+  let l = line(".")
+  let c = col(".")
+  %s/\s\+$//e
+  call cursor(l, c)
+endfunction
+
+au FileType c,cabal,cpp,javascript,php,python,ruby,readme,tex,text,vim,css,go
+  \ au BufWritePre <buffer>
+  \ :call <SID>StripTrailingWhitespaces()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Useful commands and mappings
@@ -172,7 +197,7 @@ nnoremap S :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 nnoremap <LocalLeader>d :bd<CR>
 
 " Cycle through buffers
-nnoremap <LocalLeader>b :bn<CR>
+nnoremap <LocalLeader>n :bn<CR>
 
 " Window movement
 nnoremap <C-j> <C-w>j
@@ -246,7 +271,6 @@ endfunction
 " DelimitMate
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:delimitMate_expand_cr = 1
-let g:delimitMate_jump_expansion = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " YouCompleteMe
@@ -281,29 +305,35 @@ let g:tmuxline_theme = 'zenburn'
 let g:tmuxline_preset = 'nikhil'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-" DetectIndent
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:detectindent_preferred_indent = 2
-autocmd BufReadPost * :DetectIndent
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Vim Ruby
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd FileType ruby,eruby setlocal omnifunc=rubycomplete#Complete
-autocmd FileType ruby,eruby let g:rubycomplete_rails = 1
-autocmd FileType ruby,eruby let g:rubycomplete_buffer_loading = 1
-autocmd FileType ruby,eruby let g:rubycomplete_classes_in_global = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Syntastic
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:syntastic_javascript_checkers = ['eslint']
-let g:syntastic_mode_map = {
-  \ "mode": "active",
-  \ "passive_filetypes": ["java"]
-\ }
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-Rails
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 au Filetype ruby nnoremap gd gf
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" LaTeX-Box
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:LatexBox_custom_indent = 0
+let g:LatexBox_latexmk_preview_continuously = 1
+let g:LatexBox_show_warnings = 2
+let g:LatexBox_quickfix = 2
+nmap <silent> <LocalLeader>ll :Latexmk<CR>
+
+""""""""""""""""""""""""""""""""""""
+" QFEnter
+""""""""""""""""""""""""""""""""""""
+let g:qfenter_vopen_map = ['<C-v>']
+let g:qfenter_hopen_map = ['<C-s>']
+
+""""""""""""""""""""""""""""""""""""
+" Easy Align
+""""""""""""""""""""""""""""""""""""
+vmap <LocalLeader>v <Plug>(EasyAlign)
+nmap <LocalLeader>v <Plug>(EasyAlign)
+
+" Define custome configurations
+if !exists('g:easy_align_delimiters')
+  let g:easy_align_delimiters = {}
+endif
+let g:easy_align_delimiters['_'] = { 'pattern': '-', 'ignore_groups': ['String'] }
+let g:easy_align_delimiters[':'] = { 'pattern': ':' }
+let g:easy_align_delimiters['\'] = { 'pattern': '\\' }
