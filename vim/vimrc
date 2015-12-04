@@ -10,7 +10,6 @@ endfunction
 call plug#begin('~/.vim/bundle/')
 
 " Plugins
-Plug 'gmarik/Vundle.vim'
 Plug 'Valloric/YouCompleteMe',  { 'do' : function('BuildYCM') }
 Plug 'rking/ag.vim',            { 'on' : 'Ag' }
 Plug 'junegunn/vim-easy-align'
@@ -25,17 +24,18 @@ Plug 'airblade/vim-gitgutter'
 Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'bling/vim-airline'
 Plug 'tpope/vim-endwise'
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
 Plug 'tpope/vim-sleuth'
 Plug 'yssl/QFEnter'
 Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'tpope/vim-repeat'
+Plug 'svermeulen/vim-easyclip'
 
 " Language specific plugins
 Plug 'tpope/vim-rails',          { 'for' : 'ruby'  }
 Plug 'LaTeX-Box-Team/LaTeX-Box', { 'for' : 'tex'   }
 Plug 'fatih/vim-go',             { 'for' : 'go'    }
-Plug 'Glench/Vim-Jinja2-Syntax', { 'for' : 'jinja' }
 Plug 'slim-template/vim-slim',   { 'for' : 'slim'  }
 
 " End plug
@@ -66,6 +66,7 @@ set lazyredraw                " Don't redraw when don't have to
 set showmode
 set showcmd
 set nocompatible              " Vim, not vi
+set mouse=""
 
 " Scrolling
 set sidescrolloff=5           " Keep at least 5 lines left/right
@@ -123,7 +124,7 @@ set noerrorbells              " No error bells please
 set virtualedit=onemore
 
 " QuickFix window mappings
-autocmd! FileType qf nnoremap <buffer> q :cclose<CR>
+autocmd FileType qf nnoremap <buffer> q :cclose<CR>
 
 " Kill any trailing whitespace on save (Credit to Facebook)
 function! <SID>StripTrailingWhitespaces()
@@ -133,9 +134,10 @@ function! <SID>StripTrailingWhitespaces()
   call cursor(l, c)
 endfunction
 
-au FileType c,cabal,cpp,javascript,php,python,ruby,readme,tex,text,vim,css,go
-  \ au BufWritePre <buffer>
-  \ :call <SID>StripTrailingWhitespaces()
+let g:fb_kill_whitespace_blacklist = ["snippets"]
+if index(g:fb_kill_whitespace_blacklist, &ft) < 0
+  au BufWritePre * :call <SID>StripTrailingWhitespaces()
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Useful commands and mappings
@@ -182,16 +184,17 @@ vmap j gj
 vmap k gk
 
 " :(
-:command! WQ wq
-:command! Wq wq
-:command! W w
-:command! Q q
+cnoreabbrev W w
+cnoreabbrev Q q
+cnoreabbrev WQ wq
+cnoreabbrev Wq wq
+cnoreabbrev wQ wq
 
 " Source vimrc
 nnoremap <LocalLeader>g :so ~/.vimrc<CR>
 
 " Search directory for word under cursor
-nnoremap S :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nnoremap S :Ag! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " Delete current buffer
 nnoremap <LocalLeader>d :bd<CR>
@@ -260,7 +263,7 @@ let g:NERDTreeWinSize = 50
 
 " Smart Toggle
 function! NerdTreeToggle()
-  if exists("b:NERDTreeType")
+  if exists("t:NERDTreeBufName")
     NERDTreeToggle
   else
     NERDTreeFind
@@ -337,3 +340,10 @@ endif
 let g:easy_align_delimiters['_'] = { 'pattern': '-', 'ignore_groups': ['String'] }
 let g:easy_align_delimiters[':'] = { 'pattern': ':' }
 let g:easy_align_delimiters['\'] = { 'pattern': '\\' }
+
+""""""""""""""""""""""""""""""""""""
+" Easy Clip
+""""""""""""""""""""""""""""""""""""
+nmap <C-f> <plug>EasyClipSwapPasteForward
+xmap d <Plug>MoveMotionXPlug
+nmap dd <Plug>MoveMotionLinePlug
