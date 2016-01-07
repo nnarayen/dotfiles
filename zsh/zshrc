@@ -45,11 +45,38 @@ ZSH_THEME="nnarayen"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git zsh-syntax-highlighting history-substring-search)
 
 # User configuration
 
-export PATH="$PATH:/usr/local/heroku/bin:/Users/Nikhil/.rvm/gems/ruby-1.9.3-p327@rails329/bin:/Users/Nikhil/.rvm/gems/ruby-1.9.3-p327@global/bin:/Users/Nikhil/.rvm/rubies/ruby-1.9.3-p327/bin:/Users/Nikhil/.rvm/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/texbin:/usr/local/mongodb/bin:/Users/Nikhil/.rvm/bin:/usr/local/mysql/bin"
+# Ruby config
+export PATH=$PATH:/Users/Nikhil/.rvm/gems/ruby-1.9.3-p327@rails329/bin
+export PATH=$PATH:/Users/Nikhil/.rvm/gems/ruby-1.9.3-p327@global/bin
+export PATH=$PATH:/Users/Nikhil/.rvm/rubies/ruby-1.9.3-p327/bin:/Users/Nikhil/.rvm/bin
+export PATH=$PATH:/Users/Nikhil/.rvm/bin
+
+# General PATH settings
+export PATH=$PATH:/usr/local/bin
+export PATH=$PATH:/usr/local/sbin
+export PATH=$PATH:/usr/bin
+export PATH=$PATH:/bin
+export PATH=$PATH:/usr/sbin
+export PATH=$PATH:/sbin
+export PATH=$PATH:/opt/X11/bin
+export PATH=$PATH:/usr/local/git/bin
+export PATH=$PATH:/usr/texbin
+
+# Mongodb
+export PATH=$PATH:/usr/local/mongodb/bin
+
+# MySQL
+export PATH=$PATH:/usr/local/mysql/bin
+
+# Android Studio
+export PATH=$PATH:/Users/Nikhil/Library/Android/sdk/platform-tools
+
+# Arcanist
+export PATH=$PATH:/Users/Nikhil/webtools/arcanist/bin
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -83,15 +110,47 @@ source $ZSH/oh-my-zsh.sh
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 
 ### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
+export PATH=$PATH:/usr/local/heroku/bin
 export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
-# Add bash aliases.
+# Add bash aliases
 if [ -f ~/.bash_aliases ]; then
     source ~/.bash_aliases
 fi
 
-export TERM="xterm-256color"
+# Set colorful terminal
+if [[ $TERM == xterm ]]; then
+    TERM=xterm-256color;
+fi
+
+# Go
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
+# PSQL
+export PATH=$PATH:/Applications/Postgres.app/Contents/MacOS/bin
 
 # Look into
 source $HOME/.rvm/scripts/rvm
+
+# FZF fuzzy finder
+export FZF_DEFAULT_COMMAND='ag -l --nocolor --hidden -g ""'
+
+# MacVim as default editor
+export EDITOR='vim'
+
+# Traphic Configuration
+export TRAPHIC_PATH=/Users/Nikhil/webtools/traphic/traphic
+
+# Custom Highlighting Colors
+ZSH_HIGHLIGHT_STYLES[path]=fg=cyan
+ZSH_HIGHLIGHT_STYLES[path_prefix]=fg=cyan
+
+# Binding keys for zsh-history-subsearch
+zmodload zsh/terminfo
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
+export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=fg=blue,bold
+export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=fg=red,bold
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
