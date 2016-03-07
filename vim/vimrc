@@ -123,6 +123,10 @@ set ttyfast                   " We have a fast terminal
 set noerrorbells              " No error bells please
 set virtualedit=onemore
 
+" Toggle relative numbering
+set relativenumber
+autocmd! InsertEnter,InsertLeave * set invrelativenumber
+
 " QuickFix window mappings
 autocmd FileType qf nnoremap <buffer> q :cclose<CR>
 
@@ -177,6 +181,20 @@ nmap <LocalLeader>tl :set list!<cr>
 " Toggle paste mode
 nmap <LocalLeader>pp :set paste!<cr>
 
+" Directional terminal splits
+if has('nvim')
+  command! Vterm vsp | term
+  nmap <C-a>v :Vterm<CR>
+  command! Sterm 10sp | term
+  nmap <C-a>s :Sterm<CR>
+
+  autocmd TermOpen * tnoremap <buffer> jk <C-\><C-n>
+  tnoremap <C-h> <C-\><C-n><C-w>h
+  tnoremap <C-j> <C-\><C-n><C-w>j
+  tnoremap <C-k> <C-\><C-n><C-w>k
+  tnoremap <C-l> <C-\><C-n><C-w>l
+endif
+
 " Move single lines
 nmap j gj
 nmap k gk
@@ -190,6 +208,11 @@ cnoreabbrev WQ wq
 cnoreabbrev Wq wq
 cnoreabbrev wQ wq
 
+" Neovim workaround for C-h
+if has('nvim')
+  nmap <BS> <C-W>h
+endif
+
 " Source vimrc
 nnoremap <LocalLeader>g :so ~/.vimrc<CR>
 
@@ -202,18 +225,13 @@ nnoremap <LocalLeader>d :bd<CR>
 " Cycle through buffers
 nnoremap <LocalLeader>n :bn<CR>
 
-" Window movement
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-
 " File switching
 nnoremap <LocalLeader><LocalLeader> <c-^>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " CtrlP
 """""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:ctrlp_working_path_mode = 0
 set wildignore=*.class,*.o,*.info,*.swp
 set tags=tags;/
 nnoremap <LocalLeader>. :CtrlPTag<CR>
