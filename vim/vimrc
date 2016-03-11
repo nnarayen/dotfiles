@@ -10,12 +10,13 @@ endfunction
 call plug#begin('~/.vim/bundle/')
 
 " Plugins
-Plug 'Valloric/YouCompleteMe',  { 'do' : function('BuildYCM') }
+Plug 'Shougo/deoplete.nvim'
+Plug 'benekastah/neomake'
 Plug 'rking/ag.vim',            { 'on' : 'Ag' }
 Plug 'junegunn/vim-easy-align'
 Plug 'Raimondi/delimitMate'
 Plug 'scrooloose/nerdtree'
-Plug 'kien/ctrlp.vim'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-fugitive'
@@ -23,6 +24,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'airblade/vim-gitgutter'
 Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-sleuth'
 Plug 'yssl/QFEnter'
@@ -31,6 +33,8 @@ Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'tpope/vim-repeat'
 Plug 'svermeulen/vim-easyclip'
+Plug 'tpope/vim-surround'
+Plug 'aykamko/vim-easymotion-segments'
 
 " Language specific plugins
 Plug 'tpope/vim-rails',          { 'for' : 'ruby'  }
@@ -158,12 +162,12 @@ endif
 
 " Remove insert delay
 if !has('gui_running')
-    set ttimeoutlen=40
-    augroup FastEscape
-        autocmd!
-        au InsertEnter * set timeoutlen=100
-        au InsertLeave * set timeoutlen=1000
-    augroup END
+  set ttimeoutlen=40
+  augroup FastEscape
+    autocmd!
+    au InsertEnter * set timeoutlen=100
+    au InsertLeave * set timeoutlen=1000
+  augroup END
 endif
 
 " Exiting insert mode
@@ -214,19 +218,19 @@ if has('nvim')
 endif
 
 " Source vimrc
-nnoremap <LocalLeader>g :so ~/.vimrc<CR>
+nmap <LocalLeader>g :so ~/.vimrc<CR>
 
 " Search directory for word under cursor
-nnoremap S :Ag! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nmap S :Ag! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " Delete current buffer
-nnoremap <LocalLeader>d :bd<CR>
+nmap <LocalLeader>d :bd<CR>
 
 " Cycle through buffers
-nnoremap <LocalLeader>n :bn<CR>
+nmap <LocalLeader>n :bn<CR>
 
 " File switching
-nnoremap <LocalLeader><LocalLeader> <c-^>
+nmap <LocalLeader><LocalLeader> <c-^>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " CtrlP
@@ -250,6 +254,9 @@ let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 " Easy Motion
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 map <LocalLeader> <Plug>(easymotion-prefix)
+" hi EasyMotionTarget ctermfg=39
+" hi EasyMotionTarget2First ctermfg=40
+" hi EasyMotionTarget2Second ctermfg=28
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " TComment
@@ -292,18 +299,6 @@ endfunction
 " DelimitMate
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:delimitMate_expand_cr = 1
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" YouCompleteMe
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_min_num_of_chars_for_completion = 3
-let g:ycm_min_num_identifier_candidate_chars = 3
-let g:ycm_add_preview_to_completeopt = 0
-let g:ycm_filetype_specific_completion_to_disable = { 'ruby': 1 }
-let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf = 0
-set completeopt-=preview
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Airline
@@ -365,3 +360,31 @@ let g:easy_align_delimiters['\'] = { 'pattern': '\\' }
 nmap <C-f> <plug>EasyClipSwapPasteForward
 xmap d <Plug>MoveMotionXPlug
 nmap dd <Plug>MoveMotionLinePlug
+
+""""""""""""""""""""""""""""""""""""
+" Easy Motion Segments
+""""""""""""""""""""""""""""""""""""
+let g:EasyMotionSegments_do_mapping = 0
+nmap <LocalLeader>w  <Plug>(easymotion-segments-LF)
+vmap <LocalLeader>w  <Plug>(easymotion-segments-LF)
+omap <LocalLeader>w  <Plug>(easymotion-segments-LF)
+nmap <LocalLeader>b  <Plug>(easymotion-segments-LB)
+vmap <LocalLeader>b  <Plug>(easymotion-segments-LB)
+omap <LocalLeader>b  <Plug>(easymotion-segments-LB)
+
+""""""""""""""""""""""""""""""""""""
+" Deoplete
+""""""""""""""""""""""""""""""""""""
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#auto_completion_start_length = 3
+imap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "<Tab>"
+imap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "<S-Tab>"
+
+""""""""""""""""""""""""""""""""""""
+" Neomake
+""""""""""""""""""""""""""""""""""""
+let g:neomake_open_list = 2
+let g:neomake_warning_sign={'text': '>>', 'texthl': 'Conditional'}
+let g:neomake_error_sign={'text': '>>', 'texthl': 'ErrorMsg'}
+let g:neomake_ruby_enabled_makers = ['rubocop']
+autocmd! BufWritePost * Neomake
