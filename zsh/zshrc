@@ -45,7 +45,7 @@ ZSH_THEME="nnarayen"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-syntax-highlighting history-substring-search)
+plugins=(git z zsh-syntax-highlighting history-substring-search)
 
 # User configuration
 
@@ -115,12 +115,12 @@ export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
 # Add bash aliases
 if [ -f ~/.bash_aliases ]; then
-    source ~/.bash_aliases
+  source ~/.bash_aliases
 fi
 
 # Set colorful terminal
 if [[ $TERM == xterm ]]; then
-    TERM=xterm-256color;
+  TERM=xterm-256color;
 fi
 
 # Go
@@ -152,5 +152,24 @@ bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=fg=blue,bold
 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=fg=red,bold
+
+# Powerline ZSH Prompt
+export POWERLINE=/Users/Nikhil/.oh-my-zsh/custom/plugins/powerline-shell/powerline-shell.py
+function powerline_precmd() {
+  PS1="$(${POWERLINE}  $? --shell zsh 2> /dev/null)"
+}
+
+function install_powerline_precmd() {
+  for s in "${precmd_functions[@]}"; do
+    if [ "$s" = "powerline_precmd" ]; then
+      return
+    fi
+  done
+  precmd_functions+=(powerline_precmd)
+}
+
+if [ "$TERM" != "linux" ]; then
+  install_powerline_precmd
+fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
