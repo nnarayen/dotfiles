@@ -1,25 +1,15 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-Plug
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-function! BuildYCM(info)
-  if a:info.status == 'installed' || a:info.force
-    !./install.sh --clang-completer --gocode-completer
-  endif
-endfunction
-
 call plug#begin('~/.vim/bundle/')
 
 " Plugins
 Plug 'Shougo/deoplete.nvim'
 Plug 'benekastah/neomake'
-Plug 'rking/ag.vim',            { 'on' : 'Ag' }
+Plug 'rking/ag.vim'
 Plug 'junegunn/vim-easy-align'
-Plug 'Raimondi/delimitMate'
-Plug 'scrooloose/nerdtree'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tomtom/tcomment_vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'tpope/vim-fugitive'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'airblade/vim-gitgutter'
 Plug 'FelikZ/ctrlp-py-matcher'
@@ -29,18 +19,27 @@ Plug 'tpope/vim-endwise'
 Plug 'tpope/vim-sleuth'
 Plug 'yssl/QFEnter'
 Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'pangloss/vim-javascript'
-Plug 'mxw/vim-jsx'
 Plug 'tpope/vim-repeat'
 Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-surround'
-Plug 'aykamko/vim-easymotion-segments'
+Plug 'easymotion/vim-easymotion'
+Plug 'jiangmiao/auto-pairs'
+Plug 'junegunn/vim-pseudocl'
+Plug 'junegunn/vim-oblique'
+Plug 'terryma/vim-smooth-scroll'
+Plug 'myusuf3/numbers.vim'
+Plug 'tpope/vim-fugitive'
 
 " Language specific plugins
-Plug 'tpope/vim-rails',          { 'for' : 'ruby'  }
-Plug 'LaTeX-Box-Team/LaTeX-Box', { 'for' : 'tex'   }
-Plug 'fatih/vim-go',             { 'for' : 'go'    }
-Plug 'slim-template/vim-slim',   { 'for' : 'slim'  }
+Plug 'tpope/vim-rails',          { 'for' : 'ruby' }
+Plug 'LaTeX-Box-Team/LaTeX-Box', { 'for' : 'tex'  }
+Plug 'fatih/vim-go',             { 'for' : 'go'   }
+Plug 'slim-template/vim-slim',   { 'for' : 'slim' }
+Plug 'pangloss/vim-javascript',  { 'for' : 'javascript.jsx' }
+Plug 'mxw/vim-jsx',              { 'for' : 'javascript.jsx' }
+
+" Command specific plugins
+Plug 'scrooloose/nerdtree',      { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
 
 " End plug
 call plug#end()
@@ -51,7 +50,6 @@ filetype plugin indent on    " Required for plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Color settings
 colorscheme kolor
-set t_Co=256
 syntax on
 set bg=dark
 
@@ -69,8 +67,6 @@ set noautowrite               " Don't automagically write on :next
 set lazyredraw                " Don't redraw when don't have to
 set showmode
 set showcmd
-set nocompatible              " Vim, not vi
-set mouse=""
 
 " Scrolling
 set sidescrolloff=5           " Keep at least 5 lines left/right
@@ -92,14 +88,9 @@ set laststatus=2
 set list listchars=tab:\ \ ,trail:·
 autocmd BufNewFile,BufRead * setlocal formatoptions+=t
 
-" Java specifics
+" File specific line widths
 autocmd BufNewFile,BufReadPre *.java setlocal textwidth=100
-let java_highlight_all=1
-
-" Tex Line Width
 autocmd BufNewFile,BufReadPre *.tex setlocal textwidth=80
-
-" Ruby Line Width
 autocmd BufNewFile,BufReadPre *.rb,*.rake setlocal textwidth=100
 
 " Searching
@@ -123,18 +114,20 @@ set cmdheight=1               " Command line two lines high
 set undolevels=1000           " 1000 undos
 set updatecount=100           " Switch every 100 chars
 set complete=.,w,b,u,U,t,i,d  " Do lots of scanning on tab completion
-set ttyfast                   " We have a fast terminal
 set noerrorbells              " No error bells please
 set virtualedit=onemore
 
-" Toggle relative numbering
-set relativenumber
-autocmd! InsertEnter,InsertLeave * set invrelativenumber
+" Spelling
+if v:version >= 700
+   " Enable spell check for text files
+   autocmd BufNewFile,BufRead *.txt setlocal spell spelllang=en
+endif
 
-" QuickFix window mappings
-autocmd FileType qf nnoremap <buffer> q :cclose<CR>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Useful commands and mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-" Kill any trailing whitespace on save (Credit to Facebook)
+" Kill any trailing whitespace on save (credit to FB)
 function! <SID>StripTrailingWhitespaces()
   let l = line(".")
   let c = col(".")
@@ -142,23 +135,16 @@ function! <SID>StripTrailingWhitespaces()
   call cursor(l, c)
 endfunction
 
-let g:fb_kill_whitespace_blacklist = ["snippets"]
-if index(g:fb_kill_whitespace_blacklist, &ft) < 0
+let g:kill_whitespace_blacklist = ["snippets"]
+if index(g:kill_whitespace_blacklist, &ft) < 0
   au BufWritePre * :call <SID>StripTrailingWhitespaces()
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Useful commands and mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Close all quickfix windows
+autocmd FileType qf nnoremap <buffer> q :q<CR>
 
 " Unhighlight
-nmap <LocalLeader>q :nohlsearch<CR>
-
-" Spelling
-if v:version >= 700
-   " Enable spell check for text files
-   autocmd BufNewFile,BufRead *.txt setlocal spell spelllang=en
-endif
+nnoremap <LocalLeader>q :nohlsearch<CR>
 
 " Remove insert delay
 if !has('gui_running')
@@ -179,31 +165,27 @@ nnoremap <LocalLeader>s *
 " Update buffer
 nnoremap <LocalLeader>r :checktime<CR>
 
-" Toggle list mode
-nmap <LocalLeader>tl :set list!<cr>
-
-" Toggle paste mode
-nmap <LocalLeader>pp :set paste!<cr>
+" Center screen text
+nnoremap <LocalLeader>z zz
 
 " Directional terminal splits
 if has('nvim')
   command! Vterm vsp | term
-  nmap <C-a>v :Vterm<CR>
+  nnoremap <C-a>v :Vterm<CR>
   command! Sterm 10sp | term
-  nmap <C-a>s :Sterm<CR>
+  nnoremap <C-a>s :Sterm<CR>
 
   autocmd TermOpen * tnoremap <buffer> jk <C-\><C-n>
   tnoremap <C-h> <C-\><C-n><C-w>h
   tnoremap <C-j> <C-\><C-n><C-w>j
   tnoremap <C-k> <C-\><C-n><C-w>k
-  tnoremap <C-l> <C-\><C-n><C-w>l
 endif
 
 " Move single lines
-nmap j gj
-nmap k gk
-vmap j gj
-vmap k gk
+nnoremap j gj
+nnoremap k gk
+vnoremap j gj
+vnoremap k gk
 
 " :(
 cnoreabbrev W w
@@ -214,36 +196,19 @@ cnoreabbrev wQ wq
 
 " Neovim workaround for C-h
 if has('nvim')
-  nmap <BS> <C-W>h
+  nnoremap <BS> <C-W>h
 endif
 
 " Source vimrc
-nmap <LocalLeader>g :so ~/.vimrc<CR>
-
-" Search directory for word under cursor
-nmap S :Ag! "\b<C-R><C-W>\b"<CR>:cw<CR>
-
-" Delete current buffer
-nmap <LocalLeader>d :bd<CR>
-
-" Cycle through buffers
-nmap <LocalLeader>n :bn<CR>
+nnoremap <LocalLeader>g :so ~/.vimrc<CR>
 
 " File switching
-nmap <LocalLeader><LocalLeader> <c-^>
+nnoremap <LocalLeader><LocalLeader> <c-^>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " CtrlP
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:ctrlp_working_path_mode = 0
-set wildignore=*.class,*.o,*.info,*.swp
-set tags=tags;/
-nnoremap <LocalLeader>. :CtrlPTag<CR>
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(exe|so|dll|class)$',
-\ }
-nnoremap <LocalLeader>f :CtrlPBuffer<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " PyMatcher
@@ -254,9 +219,6 @@ let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 " Easy Motion
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 map <LocalLeader> <Plug>(easymotion-prefix)
-" hi EasyMotionTarget ctermfg=39
-" hi EasyMotionTarget2First ctermfg=40
-" hi EasyMotionTarget2Second ctermfg=28
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " TComment
@@ -273,6 +235,9 @@ if executable('ag')
   let g:ctrlp_use_caching = 0             " CtrlP doesn't need to cache
   let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
 endif
+
+" Search directory for word under cursor
+nmap S :Ag! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-go
@@ -294,11 +259,6 @@ function! NerdTreeToggle()
     NERDTreeFind
   endif
 endfunction
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" DelimitMate
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:delimitMate_expand_cr = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Airline
@@ -332,7 +292,7 @@ let g:LatexBox_custom_indent = 0
 let g:LatexBox_latexmk_preview_continuously = 1
 let g:LatexBox_show_warnings = 2
 let g:LatexBox_quickfix = 2
-nmap <silent> <LocalLeader>ll :Latexmk<CR>
+nnoremap <silent> <LocalLeader>ll :Latexmk<CR>
 
 """"""""""""""""""""""""""""""""""""
 " QFEnter
@@ -357,20 +317,8 @@ let g:easy_align_delimiters['\'] = { 'pattern': '\\' }
 """"""""""""""""""""""""""""""""""""
 " Easy Clip
 """"""""""""""""""""""""""""""""""""
-nmap <C-f> <plug>EasyClipSwapPasteForward
 xmap d <Plug>MoveMotionXPlug
 nmap dd <Plug>MoveMotionLinePlug
-
-""""""""""""""""""""""""""""""""""""
-" Easy Motion Segments
-""""""""""""""""""""""""""""""""""""
-let g:EasyMotionSegments_do_mapping = 0
-nmap <LocalLeader>w  <Plug>(easymotion-segments-LF)
-vmap <LocalLeader>w  <Plug>(easymotion-segments-LF)
-omap <LocalLeader>w  <Plug>(easymotion-segments-LF)
-nmap <LocalLeader>b  <Plug>(easymotion-segments-LB)
-vmap <LocalLeader>b  <Plug>(easymotion-segments-LB)
-omap <LocalLeader>b  <Plug>(easymotion-segments-LB)
 
 """"""""""""""""""""""""""""""""""""
 " Deoplete
@@ -387,4 +335,19 @@ let g:neomake_open_list = 2
 let g:neomake_warning_sign={'text': '>>', 'texthl': 'Conditional'}
 let g:neomake_error_sign={'text': '>>', 'texthl': 'ErrorMsg'}
 let g:neomake_ruby_enabled_makers = ['rubocop']
+let g:neomake_jsx_enabled_makers = ['eslint']
+let g:neomake_c_enabled_makers = []
+let g:neomake_cpp_enabled_makers = []
+let g:neomake_tex_enabled_makers = []
 autocmd! BufWritePost * Neomake
+
+""""""""""""""""""""""""""""""""""""
+" Auto Pairs
+""""""""""""""""""""""""""""""""""""
+let g:AutoPairsMultilineClose = 0
+
+""""""""""""""""""""""""""""""""""""
+" Vim Smooth Scroll
+""""""""""""""""""""""""""""""""""""
+noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 2)<CR>
+noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 2)<CR>

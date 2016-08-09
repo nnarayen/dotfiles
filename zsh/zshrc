@@ -45,9 +45,10 @@ ZSH_THEME="nnarayen"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git z zsh-syntax-highlighting history-substring-search)
+plugins=(git safe-paste z zsh-syntax-highlighting history-substring-search)
 
 # User configuration
+setopt NO_NOMATCH
 
 # Ruby config
 export PATH=$PATH:/Users/Nikhil/.rvm/gems/ruby-1.9.3-p327@rails329/bin
@@ -77,6 +78,9 @@ export PATH=$PATH:/Users/Nikhil/Library/Android/sdk/platform-tools
 
 # Arcanist
 export PATH=$PATH:/Users/Nikhil/webtools/arcanist/bin
+
+# UPCC
+export PATH=$PATH:/usr/local/berkeley_upc/bin
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -114,8 +118,8 @@ export PATH=$PATH:/usr/local/heroku/bin
 export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
 
 # Add bash aliases
-if [ -f ~/.bash_aliases ]; then
-  source ~/.bash_aliases
+if [ -f ~/.zsh_aliases ]; then
+  source ~/.zsh_aliases
 fi
 
 # Set colorful terminal
@@ -146,17 +150,42 @@ export TRAPHIC_PATH=/Users/Nikhil/webtools/traphic/traphic
 ZSH_HIGHLIGHT_STYLES[path]=fg=cyan
 ZSH_HIGHLIGHT_STYLES[path_prefix]=fg=cyan
 
+# VIM Mode Settings
+bindkey -v
+
+bindkey -M viins 'jk' vi-cmd-mode
+bindkey '^?' backward-delete-char
+
+# Ctrl-w removed word backwards
+bindkey '^w' backward-kill-word
+
+function zle-line-init zle-keymap-select {
+  export VIMODE="${${KEYMAP/vicmd/N}/(main|viins)/I}"
+  powerline_precmd
+  zle reset-prompt
+}
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+
 # Binding keys for zsh-history-subsearch
 zmodload zsh/terminfo
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
+bindkey "$terminfo[cuu1]" history-substring-search-up
+bindkey "$terminfo[cud1]" history-substring-search-down
 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=fg=blue,bold
 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=fg=red,bold
+
+# Virtualenv Setup
+export WORKON_HOME=$HOME/.virtualenvs
+if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+  workon() { unset -f workon && source /usr/local/bin/virtualenvwrapper.sh && workon "$@"; }
+  [[ -n ${VIRTUAL_ENV} ]] && workon ${VIRTUAL_ENV:t} # autostart virtualenv
+fi
 
 # Powerline ZSH Prompt
 export POWERLINE=/Users/Nikhil/.oh-my-zsh/custom/plugins/powerline-shell/powerline-shell.py
 function powerline_precmd() {
-  PS1="$(${POWERLINE}  $? --shell zsh 2> /dev/null)"
+  PS1="$(${POWERLINE} $? --shell zsh 2> /dev/null)"
 }
 
 function install_powerline_precmd() {
@@ -172,4 +201,13 @@ if [ "$TERM" != "linux" ]; then
   install_powerline_precmd
 fi
 
+# Source FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# FZF to fuzzy search for directory
+fd() {
+  local dir
+  dir=$(find ${1:-*} -path '*/\.*' -prune \
+                  -o -type d -print 2> /dev/null | fzf +m) &&
+  cd "$dir"
+}
