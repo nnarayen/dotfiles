@@ -1,18 +1,15 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-Plug
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-call plug#begin('~/.vim/bundle/')
+call plug#begin('~/.config/nvim/bundle/')
 
 " Plugins
 Plug 'Shougo/deoplete.nvim'
 Plug 'benekastah/neomake'
-Plug 'rking/ag.vim'
 Plug 'junegunn/vim-easy-align'
-Plug 'ctrlpvim/ctrlp.vim'
 Plug 'tomtom/tcomment_vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'airblade/vim-gitgutter'
-Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'bling/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-endwise'
@@ -26,17 +23,19 @@ Plug 'easymotion/vim-easymotion'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-pseudocl'
 Plug 'junegunn/vim-oblique'
-Plug 'terryma/vim-smooth-scroll'
-Plug 'myusuf3/numbers.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'rking/ag.vim'
+Plug 'janko-m/vim-test'
 
 " Language specific plugins
-Plug 'tpope/vim-rails',          { 'for' : 'ruby' }
-Plug 'LaTeX-Box-Team/LaTeX-Box', { 'for' : 'tex'  }
-Plug 'fatih/vim-go',             { 'for' : 'go'   }
-Plug 'slim-template/vim-slim',   { 'for' : 'slim' }
-Plug 'pangloss/vim-javascript',  { 'for' : 'javascript.jsx' }
-Plug 'mxw/vim-jsx',              { 'for' : 'javascript.jsx' }
+Plug 'tpope/vim-rails',         { 'for' : 'ruby' }
+Plug 'fatih/vim-go',            { 'for' : 'go'   }
+Plug 'slim-template/vim-slim',  { 'for' : 'slim' }
+Plug 'pangloss/vim-javascript', { 'for' : 'javascript.jsx' }
+Plug 'mxw/vim-jsx',             { 'for' : 'javascript.jsx' }
+Plug 'hail2u/vim-css3-syntax',  { 'for' : 'scss.css' }
 
 " Command specific plugins
 Plug 'scrooloose/nerdtree',      { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
@@ -113,6 +112,7 @@ set linebreak
 set cmdheight=1               " Command line two lines high
 set undolevels=1000           " 1000 undos
 set updatecount=100           " Switch every 100 chars
+set updatetime=250            " Update every 250ms
 set complete=.,w,b,u,U,t,i,d  " Do lots of scanning on tab completion
 set noerrorbells              " No error bells please
 set virtualedit=onemore
@@ -140,19 +140,26 @@ if index(g:kill_whitespace_blacklist, &ft) < 0
   au BufWritePre * :call <SID>StripTrailingWhitespaces()
 endif
 
+" Toggle relative numbering
+set relativenumber
+autocmd! InsertEnter,InsertLeave * set invrelativenumber
+
 " Close all quickfix windows
 autocmd FileType qf nnoremap <buffer> q :q<CR>
 
 " Unhighlight
 nnoremap <LocalLeader>q :nohlsearch<CR>
 
+" Sort lines
+vmap <LocalLeader>S :sort<CR>
+
 " Remove insert delay
 if !has('gui_running')
-  set ttimeoutlen=40
+  set timeoutlen=300
   augroup FastEscape
     autocmd!
     au InsertEnter * set timeoutlen=100
-    au InsertLeave * set timeoutlen=1000
+    au InsertLeave * set timeoutlen=300
   augroup END
 endif
 
@@ -168,6 +175,9 @@ nnoremap <LocalLeader>r :checktime<CR>
 " Center screen text
 nnoremap <LocalLeader>z zz
 
+" Open location list
+nmap <LocalLeader>l :lopen<CR>
+
 " Directional terminal splits
 if has('nvim')
   command! Vterm vsp | term
@@ -177,8 +187,6 @@ if has('nvim')
 
   autocmd TermOpen * tnoremap <buffer> jk <C-\><C-n>
   tnoremap <C-h> <C-\><C-n><C-w>h
-  tnoremap <C-j> <C-\><C-n><C-w>j
-  tnoremap <C-k> <C-\><C-n><C-w>k
 endif
 
 " Move single lines
@@ -200,20 +208,13 @@ if has('nvim')
 endif
 
 " Source vimrc
-nnoremap <LocalLeader>g :so ~/.vimrc<CR>
+nnoremap <LocalLeader>t :so ~/.config/nvim/init.vim<CR>
 
 " File switching
 nnoremap <LocalLeader><LocalLeader> <c-^>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" CtrlP
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ctrlp_working_path_mode = 0
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" PyMatcher
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+" Copy file path
+nnoremap <LocalLeader>u :let @+=expand('%')<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Easy Motion
@@ -226,18 +227,29 @@ map <LocalLeader> <Plug>(easymotion-prefix)
 map <LocalLeader>c :TComment<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-" Ag
+" FZF
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap <LocalLeader>a :Ag!<Space>
+nmap <C-p> :FZF -m<CR>
+nmap <LocalLeader>a :FzfAg<Space>
+nmap <LocalLeader>aa :Ag!<Space>
+nmap <LocalLeader>aq :Ag! -Q<Space>
 
 if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor    " Use ag over grep
-  let g:ctrlp_use_caching = 0             " CtrlP doesn't need to cache
-  let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
 endif
 
 " Search directory for word under cursor
-nmap S :Ag! "\b<C-R><C-W>\b"<CR>:cw<CR>
+nmap S :FzfAg <C-R><C-W><CR>
+
+" Open windows in splits
+let g:fzf_action = {
+  \ 'ctrl-s': 'split',
+  \ 'ctrl-v': 'vsplit' }
+
+" Appearance
+let g:fzf_layout = { 'down': '~30%' }
+let g:fzf_nvim_statusline = 0
+let g:fzf_command_prefix = 'Fzf'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-go
@@ -259,6 +271,9 @@ function! NerdTreeToggle()
     NERDTreeFind
   endif
 endfunction
+
+let g:NERDTreeMapOpenVSplit='<C-v>'
+let g:NERDTreeMapOpenSplit='<C-s>'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Airline
@@ -284,15 +299,6 @@ let g:tmuxline_preset = 'nikhil'
 " Vim-Rails
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 au Filetype ruby nnoremap gd gf
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" LaTeX-Box
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:LatexBox_custom_indent = 0
-let g:LatexBox_latexmk_preview_continuously = 1
-let g:LatexBox_show_warnings = 2
-let g:LatexBox_quickfix = 2
-nnoremap <silent> <LocalLeader>ll :Latexmk<CR>
 
 """"""""""""""""""""""""""""""""""""
 " QFEnter
@@ -335,10 +341,15 @@ let g:neomake_open_list = 2
 let g:neomake_warning_sign={'text': '>>', 'texthl': 'Conditional'}
 let g:neomake_error_sign={'text': '>>', 'texthl': 'ErrorMsg'}
 let g:neomake_ruby_enabled_makers = ['rubocop']
+let g:neomake_json_enabled_makers = ['jsonlint']
+
+" Custom setup for javascript
+let g:neomake_javascript_enabled_makers = ['eslint']
 let g:neomake_jsx_enabled_makers = ['eslint']
-let g:neomake_c_enabled_makers = []
-let g:neomake_cpp_enabled_makers = []
-let g:neomake_tex_enabled_makers = []
+let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
+let g:neomake_jsx_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
+let g:neomake_javascript_eslint_args = neomake#makers#ft#javascript#eslint()['args'] + ["--quiet"]
+let g:neomake_jsx_eslint_args = neomake#makers#ft#jsx#eslint()['args'] + ["--quiet"]
 autocmd! BufWritePost * Neomake
 
 """"""""""""""""""""""""""""""""""""
@@ -347,7 +358,28 @@ autocmd! BufWritePost * Neomake
 let g:AutoPairsMultilineClose = 0
 
 """"""""""""""""""""""""""""""""""""
-" Vim Smooth Scroll
+" Fugitive
 """"""""""""""""""""""""""""""""""""
-noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 10, 2)<CR>
-noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 10, 2)<CR>
+nnoremap <silent> <LocalLeader>gs :Gstatus<CR>
+nnoremap <silent> <LocalLeader>gd :Gdiff<CR>
+nnoremap <silent> <LocalLeader>gc :Gcommit<CR>
+nnoremap <silent> <LocalLeader>gb :Gblame<CR>
+nnoremap <silent> <LocalLeader>gr :Gread<CR>
+nnoremap <silent> <LocalLeader>gw :Gwrite<CR>
+
+let g:fugitive_github_domains = ['github.com', 'git.musta.ch']
+
+""""""""""""""""""""""""""""""""""""
+" Vim-Test
+""""""""""""""""""""""""""""""""""""
+let g:test#strategy = 'neovim'
+let g:test#javascript#runner = 'mocha'
+let g:test#javascript#mocha#executable = 'npm run mocha'
+
+nmap <silent> <LocalLeader>T :TestFile<CR>
+
+""""""""""""""""""""""""""""""""""""
+" GitGutter
+""""""""""""""""""""""""""""""""""""
+nmap <LocalLeader>hn <Plug>GitGutterNextHunk
+nmap <LocalLeader>hu <Plug>GitGutterUndoHunk
