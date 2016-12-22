@@ -21,24 +21,25 @@ Plug 'svermeulen/vim-easyclip'
 Plug 'tpope/vim-surround'
 Plug 'easymotion/vim-easymotion'
 Plug 'jiangmiao/auto-pairs'
-Plug 'junegunn/vim-pseudocl'
-Plug 'junegunn/vim-oblique'
+Plug 'junegunn/vim-slash'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'rking/ag.vim'
-Plug 'janko-m/vim-test'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'sickill/vim-pasta'
+Plug 'AndrewRadev/splitjoin.vim'
 
 " Language specific plugins
-Plug 'tpope/vim-rails',         { 'for' : 'ruby' }
-Plug 'fatih/vim-go',            { 'for' : 'go'   }
-Plug 'slim-template/vim-slim',  { 'for' : 'slim' }
-Plug 'pangloss/vim-javascript', { 'for' : 'javascript.jsx' }
-Plug 'mxw/vim-jsx',             { 'for' : 'javascript.jsx' }
-Plug 'hail2u/vim-css3-syntax',  { 'for' : 'scss.css' }
+Plug 'tpope/vim-rails',               { 'for' : 'ruby' }
+Plug 'fatih/vim-go',                  { 'for' : 'go'   }
+Plug 'slim-template/vim-slim',        { 'for' : 'slim' }
+Plug 'pangloss/vim-javascript',       { 'for' : 'javascript.jsx' }
+Plug 'mxw/vim-jsx',                   { 'for' : 'javascript.jsx' }
+Plug 'hail2u/vim-css3-syntax',        { 'for' : 'scss.css' }
 
 " Command specific plugins
-Plug 'scrooloose/nerdtree',      { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
+Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
 
 " End plug
 call plug#end()
@@ -116,6 +117,11 @@ set updatetime=250            " Update every 250ms
 set complete=.,w,b,u,U,t,i,d  " Do lots of scanning on tab completion
 set noerrorbells              " No error bells please
 set virtualedit=onemore
+set tags=./tags,tags;         " Find tags file
+
+" Toggle relative numbering
+set relativenumber
+autocmd! InsertEnter,InsertLeave * set invrelativenumber
 
 " Spelling
 if v:version >= 700
@@ -140,10 +146,6 @@ if index(g:kill_whitespace_blacklist, &ft) < 0
   au BufWritePre * :call <SID>StripTrailingWhitespaces()
 endif
 
-" Toggle relative numbering
-set relativenumber
-autocmd! InsertEnter,InsertLeave * set invrelativenumber
-
 " Close all quickfix windows
 autocmd FileType qf nnoremap <buffer> q :q<CR>
 
@@ -167,13 +169,13 @@ endif
 inoremap jk <Esc>
 
 " Search word under cursor
-nnoremap <LocalLeader>s *
+nmap <LocalLeader>s *
 
 " Update buffer
 nnoremap <LocalLeader>r :checktime<CR>
 
-" Center screen text
-nnoremap <LocalLeader>z zz
+" Jump to current function declaration
+nmap <LocalLeader>d [m
 
 " Open location list
 nmap <LocalLeader>l :lopen<CR>
@@ -189,11 +191,12 @@ if has('nvim')
   tnoremap <C-h> <C-\><C-n><C-w>h
 endif
 
-" Move single lines
-nnoremap j gj
-nnoremap k gk
-vnoremap j gj
-vnoremap k gk
+" Intelligently jump over wrapped lines
+nnoremap <expr> j v:count ? 'j' : 'gj'
+nnoremap <expr> k v:count ? 'k' : 'gk'
+
+vnoremap <expr> j v:count ? 'j' : 'gj'
+vnoremap <expr> k v:count ? 'k' : 'gk'
 
 " :(
 cnoreabbrev W w
@@ -201,6 +204,19 @@ cnoreabbrev Q q
 cnoreabbrev WQ wq
 cnoreabbrev Wq wq
 cnoreabbrev wQ wq
+
+" Easier tag jumping
+nmap <LocalLeader>x <C-]>
+
+" Easily move to start/end of line
+nnoremap H ^
+vnoremap H ^
+nnoremap L $
+vnoremap L $
+
+" Easier to run commands
+nnoremap ; :
+vnoremap ; :
 
 " Neovim workaround for C-h
 if has('nvim')
@@ -215,6 +231,15 @@ nnoremap <LocalLeader><LocalLeader> <c-^>
 
 " Copy file path
 nnoremap <LocalLeader>u :let @+=expand('%')<CR>
+
+" Run a macro on all visually selected lines
+" https://medium.com/@schtoeffel/you-don-t-need-more-than-one-cursor-in-vim-2c44117d51db#.3dcn9prw6
+xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
+
+function! ExecuteMacroOverVisualRange()
+  echo "@".getcmdline()
+  execute ":'<,'>normal @".nr2char(getchar())
+endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Easy Motion
@@ -233,18 +258,20 @@ nmap <C-p> :FZF -m<CR>
 nmap <LocalLeader>a :FzfAg<Space>
 nmap <LocalLeader>aa :Ag!<Space>
 nmap <LocalLeader>aq :Ag! -Q<Space>
+nmap <LocalLeader>. :FzfTags<CR>
 
 if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor    " Use ag over grep
 endif
 
 " Search directory for word under cursor
-nmap S :FzfAg <C-R><C-W><CR>
+nmap S :FzfAg (self\.)?<C-R><C-W><CR>
 
 " Open windows in splits
 let g:fzf_action = {
   \ 'ctrl-s': 'split',
-  \ 'ctrl-v': 'vsplit' }
+  \ 'ctrl-v': 'vsplit',
+\ }
 
 " Appearance
 let g:fzf_layout = { 'down': '~30%' }
@@ -260,17 +287,9 @@ au Filetype go nnoremap <LocalLeader>v :vsp <CR>:exe "GoDef"<CR>
 " NERDTree
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-nnoremap <LocalLeader>m :call NerdTreeToggle()<CR>
+nnoremap <LocalLeader>m :NERDTreeToggle<CR>
+nnoremap <LocalLeader>f :NERDTreeFind<CR>
 let g:NERDTreeWinSize = 50
-
-" Smart Toggle
-function! NerdTreeToggle()
-  if exists("t:NERDTreeBufName")
-    NERDTreeToggle
-  else
-    NERDTreeFind
-  endif
-endfunction
 
 let g:NERDTreeMapOpenVSplit='<C-v>'
 let g:NERDTreeMapOpenSplit='<C-s>'
@@ -333,6 +352,7 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_completion_start_length = 3
 imap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "<Tab>"
 imap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "<S-Tab>"
+let g:deoplete#file#enable_buffer_path = 1
 
 """"""""""""""""""""""""""""""""""""
 " Neomake
@@ -340,8 +360,9 @@ imap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "<S-Tab>"
 let g:neomake_open_list = 2
 let g:neomake_warning_sign={'text': '>>', 'texthl': 'Conditional'}
 let g:neomake_error_sign={'text': '>>', 'texthl': 'ErrorMsg'}
+let g:neomake_python_enabled_makers = ['flake8']
 let g:neomake_ruby_enabled_makers = ['rubocop']
-let g:neomake_json_enabled_makers = ['jsonlint']
+let g:neomake_java_enabled_makers = []
 
 " Custom setup for javascript
 let g:neomake_javascript_enabled_makers = ['eslint']
@@ -350,6 +371,7 @@ let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which esl
 let g:neomake_jsx_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
 let g:neomake_javascript_eslint_args = neomake#makers#ft#javascript#eslint()['args'] + ["--quiet"]
 let g:neomake_jsx_eslint_args = neomake#makers#ft#jsx#eslint()['args'] + ["--quiet"]
+
 autocmd! BufWritePost * Neomake
 
 """"""""""""""""""""""""""""""""""""
@@ -364,19 +386,8 @@ nnoremap <silent> <LocalLeader>gs :Gstatus<CR>
 nnoremap <silent> <LocalLeader>gd :Gdiff<CR>
 nnoremap <silent> <LocalLeader>gc :Gcommit<CR>
 nnoremap <silent> <LocalLeader>gb :Gblame<CR>
-nnoremap <silent> <LocalLeader>gr :Gread<CR>
-nnoremap <silent> <LocalLeader>gw :Gwrite<CR>
 
 let g:fugitive_github_domains = ['github.com', 'git.musta.ch']
-
-""""""""""""""""""""""""""""""""""""
-" Vim-Test
-""""""""""""""""""""""""""""""""""""
-let g:test#strategy = 'neovim'
-let g:test#javascript#runner = 'mocha'
-let g:test#javascript#mocha#executable = 'npm run mocha'
-
-nmap <silent> <LocalLeader>T :TestFile<CR>
 
 """"""""""""""""""""""""""""""""""""
 " GitGutter
