@@ -4,7 +4,6 @@
 call plug#begin('~/.config/nvim/bundle/')
 
 " Plugins
-Plug 'Shougo/deoplete.nvim'
 Plug 'benekastah/neomake'
 Plug 'junegunn/vim-easy-align'
 Plug 'tomtom/tcomment_vim'
@@ -24,11 +23,13 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-slash'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'rking/ag.vim'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'sickill/vim-pasta'
 Plug 'AndrewRadev/splitjoin.vim'
+
+" Post installation hooks
+Plug 'junegunn/fzf',         { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " Language specific plugins
 Plug 'tpope/vim-rails',               { 'for' : 'ruby' }
@@ -256,8 +257,6 @@ map <LocalLeader>c :TComment<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <C-p> :FZF -m<CR>
 nmap <LocalLeader>a :FzfAg<Space>
-nmap <LocalLeader>aa :Ag!<Space>
-nmap <LocalLeader>aq :Ag! -Q<Space>
 nmap <LocalLeader>. :FzfTags<CR>
 
 if executable('ag')
@@ -343,6 +342,7 @@ let g:easy_align_delimiters['\'] = { 'pattern': '\\' }
 " Easy Clip
 """"""""""""""""""""""""""""""""""""
 xmap d <Plug>MoveMotionXPlug
+xmap x <Plug>MoveMotionXPlug
 nmap dd <Plug>MoveMotionLinePlug
 
 """"""""""""""""""""""""""""""""""""
@@ -386,6 +386,7 @@ nnoremap <silent> <LocalLeader>gs :Gstatus<CR>
 nnoremap <silent> <LocalLeader>gd :Gdiff<CR>
 nnoremap <silent> <LocalLeader>gc :Gcommit<CR>
 nnoremap <silent> <LocalLeader>gb :Gblame<CR>
+nnoremap <silent> <LocalLeader>gr :Gbrowse<CR>
 
 let g:fugitive_github_domains = ['github.com', 'git.musta.ch']
 
