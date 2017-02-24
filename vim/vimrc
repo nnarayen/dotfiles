@@ -38,6 +38,7 @@ Plug 'slim-template/vim-slim',        { 'for' : 'slim' }
 Plug 'pangloss/vim-javascript',       { 'for' : 'javascript.jsx' }
 Plug 'mxw/vim-jsx',                   { 'for' : 'javascript.jsx' }
 Plug 'hail2u/vim-css3-syntax',        { 'for' : 'scss.css' }
+Plug 'Vimjas/vim-python-pep8-indent', { 'for' : 'python' }
 
 " Command specific plugins
 Plug 'scrooloose/nerdtree', { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
@@ -212,8 +213,10 @@ nmap <LocalLeader>x <C-]>
 " Easily move to start/end of line
 nnoremap H ^
 vnoremap H ^
+onoremap H ^
 nnoremap L $
 vnoremap L $
+onoremap L $
 
 " Easier to run commands
 nnoremap ; :
@@ -387,6 +390,7 @@ nnoremap <silent> <LocalLeader>gd :Gdiff<CR>
 nnoremap <silent> <LocalLeader>gc :Gcommit<CR>
 nnoremap <silent> <LocalLeader>gb :Gblame<CR>
 nnoremap <silent> <LocalLeader>gr :Gbrowse<CR>
+vnoremap <silent> <LocalLeader>gr :Gbrowse<CR>
 
 let g:fugitive_github_domains = ['github.com', 'git.musta.ch']
 
@@ -395,3 +399,8 @@ let g:fugitive_github_domains = ['github.com', 'git.musta.ch']
 """"""""""""""""""""""""""""""""""""
 nmap <LocalLeader>hn <Plug>GitGutterNextHunk
 nmap <LocalLeader>hu <Plug>GitGutterUndoHunk
+
+""""""""""""""""""""""""""""""""""""
+" VimPasta
+""""""""""""""""""""""""""""""""""""
+let g:pasta_disabled_filetypes = ['coffee', 'yaml']
