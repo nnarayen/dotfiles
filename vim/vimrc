@@ -25,7 +25,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'junegunn/fzf.vim'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'sickill/vim-pasta'
-Plug 'AndrewRadev/splitjoin.vim'
+Plug 'Shougo/neosnippet.vim'
+Plug 'Shougo/neosnippet-snippets'
 
 " Post installation hooks
 Plug 'junegunn/fzf',         { 'dir': '~/.fzf', 'do': './install --all' }
@@ -33,11 +34,8 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " Language specific plugins
 Plug 'tpope/vim-rails',               { 'for' : 'ruby' }
-Plug 'fatih/vim-go',                  { 'for' : 'go'   }
-Plug 'slim-template/vim-slim',        { 'for' : 'slim' }
 Plug 'pangloss/vim-javascript',       { 'for' : 'javascript.jsx' }
 Plug 'mxw/vim-jsx',                   { 'for' : 'javascript.jsx' }
-Plug 'hail2u/vim-css3-syntax',        { 'for' : 'scss.css' }
 Plug 'Vimjas/vim-python-pep8-indent', { 'for' : 'python' }
 
 " Command specific plugins
@@ -69,6 +67,7 @@ set noautowrite               " Don't automagically write on :next
 set lazyredraw                " Don't redraw when don't have to
 set showmode
 set showcmd
+set cursorline
 
 " Scrolling
 set sidescrolloff=5           " Keep at least 5 lines left/right
@@ -143,7 +142,7 @@ function! <SID>StripTrailingWhitespaces()
   call cursor(l, c)
 endfunction
 
-let g:kill_whitespace_blacklist = ["snippets"]
+let g:kill_whitespace_blacklist = ["neosnippet"]
 if index(g:kill_whitespace_blacklist, &ft) < 0
   au BufWritePre * :call <SID>StripTrailingWhitespaces()
 endif
@@ -206,6 +205,9 @@ cnoreabbrev Q q
 cnoreabbrev WQ wq
 cnoreabbrev Wq wq
 cnoreabbrev wQ wq
+
+" Avoid ex mode
+nnoremap Q <nop>
 
 " Easier tag jumping
 nmap <LocalLeader>x <C-]>
@@ -353,9 +355,30 @@ nmap dd <Plug>MoveMotionLinePlug
 """"""""""""""""""""""""""""""""""""
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_completion_start_length = 3
-imap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "<Tab>"
-imap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "<S-Tab>"
 let g:deoplete#file#enable_buffer_path = 1
+let g:deoplete#ignore_sources = {}
+let g:deoplete#ignore_sources._ = ["neosnippet"]
+
+""""""""""""""""""""""""""""""""""""
+" Neosnippets
+""""""""""""""""""""""""""""""""""""
+function! s:neosnippet_complete()
+  if pumvisible()
+    return "\<c-n>"
+  else
+    if neosnippet#expandable_or_jumpable()
+      return "\<Plug>(neosnippet_expand_or_jump)"
+    endif
+    return "\<tab>"
+  endif
+endfunction
+
+imap <C-k> <Plug>(neosnippet_expand_or_jump)
+smap <C-k> <Plug>(neosnippet_expand_or_jump)
+xmap <C-k> <Plug>(neosnippet_expand_target)
+imap <expr><TAB> <SID>neosnippet_complete()
+smap <expr><TAB> <SID>neosnippet_complete()
+xmap <expr><TAB> <SID>neosnippet_complete()
 
 """"""""""""""""""""""""""""""""""""
 " Neomake
@@ -385,12 +408,12 @@ let g:AutoPairsMultilineClose = 0
 """"""""""""""""""""""""""""""""""""
 " Fugitive
 """"""""""""""""""""""""""""""""""""
-nnoremap <silent> <LocalLeader>gs :Gstatus<CR>
-nnoremap <silent> <LocalLeader>gd :Gdiff<CR>
-nnoremap <silent> <LocalLeader>gc :Gcommit<CR>
-nnoremap <silent> <LocalLeader>gb :Gblame<CR>
-nnoremap <silent> <LocalLeader>gr :Gbrowse<CR>
-vnoremap <silent> <LocalLeader>gr :Gbrowse<CR>
+nmap <silent> <LocalLeader>gs :Gstatus<CR>
+nmap <silent> <LocalLeader>gd :Gdiff<CR>
+nmap <silent> <LocalLeader>gc :Gcommit<CR>
+nmap <silent> <LocalLeader>gb :Gblame<CR>
+nmap <silent> <LocalLeader>gr :Gbrowse<CR>
+vmap <silent> <LocalLeader>gr :Gbrowse<CR>
 
 let g:fugitive_github_domains = ['github.com', 'git.musta.ch']
 
@@ -403,4 +426,4 @@ nmap <LocalLeader>hu <Plug>GitGutterUndoHunk
 """"""""""""""""""""""""""""""""""""
 " VimPasta
 """"""""""""""""""""""""""""""""""""
-let g:pasta_disabled_filetypes = ['coffee', 'yaml']
+let g:pasta_disabled_filetypes = ["coffee", "markdown", "yaml", "slim", "nerdtree"]
