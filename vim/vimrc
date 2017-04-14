@@ -27,6 +27,9 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'sickill/vim-pasta'
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
+Plug 'tmux-plugins/vim-tmux-focus-events'
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'AndrewRadev/andrews_nerdtree.vim'
 
 " Post installation hooks
 Plug 'junegunn/fzf',         { 'dir': '~/.fzf', 'do': './install --all' }
@@ -226,7 +229,7 @@ vnoremap ; :
 
 " Neovim workaround for C-h
 if has('nvim')
-  nnoremap <BS> <C-W>h
+  nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 endif
 
 " Source vimrc
@@ -237,6 +240,9 @@ nnoremap <LocalLeader><LocalLeader> <c-^>
 
 " Copy file path
 nnoremap <LocalLeader>u :let @+=expand('%')<CR>
+
+" Evenly size all splits
+nnoremap <silent> <C-q> <C-w>=
 
 " Run a macro on all visually selected lines
 " https://medium.com/@schtoeffel/you-don-t-need-more-than-one-cursor-in-vim-2c44117d51db#.3dcn9prw6
@@ -261,15 +267,14 @@ map <LocalLeader>c :TComment<CR>
 " FZF
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <C-p> :FZF -m<CR>
-nmap <LocalLeader>a :FzfAg<Space>
-nmap <LocalLeader>. :FzfTags<CR>
+nmap <LocalLeader>a :Rg<Space>
+nmap <LocalLeader>. :Tags<CR>
 
-if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor    " Use ag over grep
-endif
+" Use ripgrep for code searching
+command! -bang -nargs=* Rg call fzf#vim#grep('rgf '.shellescape(<q-args>), 1, <bang>0)
 
-" Search directory for word under cursor
-nmap S :FzfAg (self\.)?<C-R><C-W><CR>
+" Search for word under cursor
+nmap S :Rg (self\.)?<C-R><C-W><CR>
 
 " Open windows in splits
 let g:fzf_action = {
@@ -280,7 +285,6 @@ let g:fzf_action = {
 " Appearance
 let g:fzf_layout = { 'down': '~30%' }
 let g:fzf_nvim_statusline = 0
-let g:fzf_command_prefix = 'Fzf'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Vim-go
@@ -297,6 +301,7 @@ let g:NERDTreeWinSize = 50
 
 let g:NERDTreeMapOpenVSplit='<C-v>'
 let g:NERDTreeMapOpenSplit='<C-s>'
+let g:andrews_nerdtree_buffer_fs_menu = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Airline
@@ -427,3 +432,10 @@ nmap <LocalLeader>hu <Plug>GitGutterUndoHunk
 " VimPasta
 """"""""""""""""""""""""""""""""""""
 let g:pasta_disabled_filetypes = ["coffee", "markdown", "yaml", "slim", "nerdtree"]
+
+""""""""""""""""""""""""""""""""""""
+" SplitJoin
+""""""""""""""""""""""""""""""""""""
+let g:splitjoin_trailing_comma = 1
+let g:splitjoin_ruby_hanging_args = 0
+let g:splitjoin_python_brackets_on_separate_lines = 1
