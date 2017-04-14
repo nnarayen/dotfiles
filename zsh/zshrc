@@ -45,16 +45,10 @@ ZSH_THEME="nnarayen"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git safe-paste z zsh-syntax-highlighting history-substring-search)
+plugins=(git safe-paste z virtualenvwrapper zsh-syntax-highlighting history-substring-search)
 
 # User configuration
 setopt NO_NOMATCH
-
-# Ruby config
-export PATH=$PATH:/Users/Nikhil/.rvm/gems/ruby-1.9.3-p327@rails329/bin
-export PATH=$PATH:/Users/Nikhil/.rvm/gems/ruby-1.9.3-p327@global/bin
-export PATH=$PATH:/Users/Nikhil/.rvm/rubies/ruby-1.9.3-p327/bin:/Users/Nikhil/.rvm/bin
-export PATH=$PATH:/Users/Nikhil/.rvm/bin
 
 # General PATH settings
 export PATH=$PATH:/usr/local/bin
@@ -67,22 +61,8 @@ export PATH=$PATH:/opt/X11/bin
 export PATH=$PATH:/usr/local/git/bin
 export PATH=$PATH:/usr/texbin
 
-# Mongodb
-export PATH=$PATH:/usr/local/mongodb/bin
-
-# MySQL
-export PATH=$PATH:/usr/local/mysql/bin
-
-# Android Studio
-export PATH=$PATH:/Users/Nikhil/Library/Android/sdk/platform-tools
-
-# Arcanist
-export PATH=$PATH:/Users/Nikhil/webtools/arcanist/bin
-
-# UPCC
-export PATH=$PATH:/usr/local/berkeley_upc/bin
-
-# export MANPATH="/usr/local/man:$MANPATH"
+# Add Yubikey to PATH
+export PATH=$PATH:/opt/airbnb/bin
 
 source $ZSH/oh-my-zsh.sh
 
@@ -111,13 +91,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
-
-### Added by the Heroku Toolbelt
-export PATH=$PATH:/usr/local/heroku/bin
-export DYLD_LIBRARY_PATH=/usr/local/mysql/lib:$DYLD_LIBRARY_PATH
-
-# Add bash aliases
+# Add zsh aliases
 if [ -f ~/.zsh_aliases ]; then
   source ~/.zsh_aliases
 fi
@@ -127,63 +101,26 @@ if [[ $TERM == xterm ]]; then
   TERM=xterm-256color;
 fi
 
-# Go
-export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
-
-# PSQL
-export PATH=$PATH:/Applications/Postgres.app/Contents/MacOS/bin
-
-# Look into
-source $HOME/.rvm/scripts/rvm
-
 # FZF fuzzy finder
-export FZF_DEFAULT_COMMAND='ag -l --nocolor --hidden -g ""'
+export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --glob "!.git/*"'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_R_OPTS='--sort'
 
-# MacVim as default editor
+# Neovim as default editor
 export EDITOR='vim'
 
-# Traphic Configuration
-export TRAPHIC_PATH=/Users/Nikhil/webtools/traphic/traphic
-
 # Custom Highlighting Colors
+ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red,bold
+ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=green
+ZSH_HIGHLIGHT_STYLES[alias]=fg=green,bold
+ZSH_HIGHLIGHT_STYLES[command]=fg=green,bold
 ZSH_HIGHLIGHT_STYLES[path]=fg=cyan
 ZSH_HIGHLIGHT_STYLES[path_prefix]=fg=cyan
 
-# VIM Mode Settings
-bindkey -v
-
-bindkey -M viins 'jk' vi-cmd-mode
-bindkey '^?' backward-delete-char
-
-# Ctrl-w removed word backwards
-bindkey '^w' backward-kill-word
-
-function zle-line-init zle-keymap-select {
-  export VIMODE="${${KEYMAP/vicmd/N}/(main|viins)/I}"
-  powerline_precmd
-  zle reset-prompt
-}
-
-zle -N zle-line-init
-zle -N zle-keymap-select
-
-# Binding keys for zsh-history-subsearch
-zmodload zsh/terminfo
-bindkey "$terminfo[cuu1]" history-substring-search-up
-bindkey "$terminfo[cud1]" history-substring-search-down
-export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=fg=blue,bold
-export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=fg=red,bold
-
-# Virtualenv Setup
-export WORKON_HOME=$HOME/.virtualenvs
-if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
-  workon() { unset -f workon && source /usr/local/bin/virtualenvwrapper.sh && workon "$@"; }
-  [[ -n ${VIRTUAL_ENV} ]] && workon ${VIRTUAL_ENV:t} # autostart virtualenv
-fi
-
-# Powerline ZSH Prompt
-export POWERLINE=/Users/Nikhil/.oh-my-zsh/custom/plugins/powerline-shell/powerline-shell.py
+# Powerline settings
+export POWERLINE=/Users/nikhil_narayen/.oh-my-zsh/custom/plugins/powerline-shell/powerline-shell.py
 function powerline_precmd() {
   PS1="$(${POWERLINE} $? --shell zsh 2> /dev/null)"
 }
@@ -201,6 +138,59 @@ if [ "$TERM" != "linux" ]; then
   install_powerline_precmd
 fi
 
+# 100ms insert delay for VI Mode
+KEYTIMEOUT=10
+
+# VI Mode Settings
+bindkey -v
+
+bindkey -M viins 'jk' vi-cmd-mode
+bindkey '^?' backward-delete-char
+
+bindkey -M viins "$terminfo[cuu1]" history-substring-search-up
+bindkey -M viins "$terminfo[cud1]" history-substring-search-down
+bindkey -M viins "^u" clear-screen
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+bindkey -M vicmd '^a' beginning-of-line
+bindkey -M vicmd '^e' end-of-line
+bindkey -M vicmd 'H' beginning-of-line
+bindkey -M vicmd 'L' end-of-line
+
+# Ctrl-w removed word backwards
+bindkey '^w' backward-kill-word
+
+# [Shift-Tab] - move through the completion menu backwards
+bindkey '^[[Z' reverse-menu-complete
+
+function zle-line-init zle-keymap-select {
+  export VIMODE="${${KEYMAP/vicmd/N}/(main|viins)/I}"
+  powerline_precmd
+  zle reset-prompt
+}
+
+zle -N zle-line-init
+zle -N zle-keymap-select
+
+# Binding keys for zsh-history-subsearch
+zmodload zsh/terminfo
+export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND=fg=green,bold
+export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND=fg=red,bold
+
+# Virtualenv Setup
+export WORKON_HOME=$HOME/.virtualenvs
+if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+  workon() { unset -f workon && source /usr/local/bin/virtualenvwrapper.sh && workon "$@"; }
+  [[ -n ${VIRTUAL_ENV} ]] && workon ${VIRTUAL_ENV:t} # autostart virtualenv
+fi
+
+function _copy-to-clipboard {
+  print -rn -- $BUFFER | pbcopy
+  [ -n "$TMUX" ] && tmux display-message 'Line copied to clipboard!'
+}
+zle -N _copy-to-clipboard
+bindkey -M viins "\`y" _copy-to-clipboard
+
 # Source FZF
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -211,3 +201,19 @@ fd() {
                   -o -type d -print 2> /dev/null | fzf +m) &&
   cd "$dir"
 }
+
+# cdf - cd into the directory of the selected file
+cdf() {
+  local file
+  local dir
+  file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
+}
+
+# Only tab complete local branches.
+zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
+
+# Java setup
+export JAVA7_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home
+export JAVA8_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home
+export JAVA_HOME=$JAVA8_HOME
+export PATH=$JAVA_HOME/bin:$PATH
