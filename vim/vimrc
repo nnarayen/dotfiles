@@ -27,9 +27,7 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'sickill/vim-pasta'
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
-Plug 'tmux-plugins/vim-tmux-focus-events'
 Plug 'AndrewRadev/splitjoin.vim'
-Plug 'AndrewRadev/andrews_nerdtree.vim'
 
 " Post installation hooks
 Plug 'junegunn/fzf',         { 'dir': '~/.fzf', 'do': './install --all' }
@@ -57,7 +55,7 @@ syntax on
 set bg=dark
 
 " Local Leader
-let maplocalleader=','        " All my macros start with ,
+let maplocalleader=' '        " All my macros start with <Space>
 
 " Display
 set cc=+1
@@ -215,6 +213,9 @@ nnoremap Q <nop>
 " Easier tag jumping
 nmap <LocalLeader>x <C-]>
 
+" Reload files on focus
+au FocusGained * if &autoread | silent checktime | endif
+
 " Easily move to start/end of line
 nnoremap H ^
 vnoremap H ^
@@ -261,6 +262,9 @@ map <LocalLeader> <Plug>(easymotion-prefix)
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " TComment
 """""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:tcommentMapLeader1 = ''
+let g:tcommentMapLeader2 = ''
+let g:tcommentMapLeaderCommentAnyway = ''
 map <LocalLeader>c :TComment<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -301,7 +305,6 @@ let g:NERDTreeWinSize = 50
 
 let g:NERDTreeMapOpenVSplit='<C-v>'
 let g:NERDTreeMapOpenSplit='<C-s>'
-let g:andrews_nerdtree_buffer_fs_menu = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Airline
@@ -338,7 +341,6 @@ let g:qfenter_hopen_map = ['<C-s>']
 " Easy Align
 """"""""""""""""""""""""""""""""""""
 vmap <LocalLeader>v <Plug>(EasyAlign)
-nmap <LocalLeader>v <Plug>(EasyAlign)
 
 " Define custome configurations
 if !exists('g:easy_align_delimiters')
@@ -354,6 +356,7 @@ let g:easy_align_delimiters['\'] = { 'pattern': '\\' }
 xmap d <Plug>MoveMotionXPlug
 xmap x <Plug>MoveMotionXPlug
 nmap dd <Plug>MoveMotionLinePlug
+nnoremap dl "_dd
 
 """"""""""""""""""""""""""""""""""""
 " Deoplete
@@ -400,8 +403,15 @@ let g:neomake_javascript_enabled_makers = ['eslint']
 let g:neomake_jsx_enabled_makers = ['eslint']
 let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
 let g:neomake_jsx_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
-let g:neomake_javascript_eslint_args = neomake#makers#ft#javascript#eslint()['args'] + ["--quiet"]
-let g:neomake_jsx_eslint_args = neomake#makers#ft#jsx#eslint()['args'] + ["--quiet"]
+let g:neomake_javascript_eslint_maker = {
+  \ 'args': ['--no-color', '--format', 'compact', '--quiet'],
+  \ 'errorformat': '%f: line %l\, col %c\, %m'
+\ }
+
+let g:neomake_jsx_eslint_maker = {
+  \ 'args': ['--no-color', '--format', 'compact', '--quiet'],
+  \ 'errorformat': '%f: line %l\, col %c\, %m'
+\ }
 
 autocmd! BufWritePost * Neomake
 
@@ -436,6 +446,12 @@ let g:pasta_disabled_filetypes = ["coffee", "markdown", "yaml", "slim", "nerdtre
 """"""""""""""""""""""""""""""""""""
 " SplitJoin
 """"""""""""""""""""""""""""""""""""
+let g:splitjoin_split_mapping = ''
+let g:splitjoin_join_mapping = ''
+
+nmap <LocalLeader>k :SplitjoinJoin<cr>
+nmap <LocalLeader>j :SplitjoinSplit<cr>
+
 let g:splitjoin_trailing_comma = 1
 let g:splitjoin_ruby_hanging_args = 0
 let g:splitjoin_python_brackets_on_separate_lines = 1
