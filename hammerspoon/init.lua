@@ -1,35 +1,16 @@
 -- name = "Nikhil Narayen"
 -- email = "nikhil.narayen@airbnb.com"
 
---- Move window by top/left and botom/right as recent of the screen
-function moveWindowPercentOfScreen(x1, y1, x2, y2)
-  return function()
-    local win = hs.window.focusedWindow()
-    local f = win:frame()
-    local screen = win:screen()
-    local bounds = screen:frame()
+-- Define default Spoons which will be loaded later
+if not hspoon_list then
+  hspoon_list = {
+    "WinWin",
+  }
+end
 
-    -- Set the window location as top/left plus height and width
-    topLeftX = bounds.x + (bounds.w * x1)
-    topLeftY = bounds.y + (bounds.h * y1)
-    width = bounds.w * x2
-    height = bounds.h * y2
-
-    --- Bring bottom/right of window within screen bounds
-    if (topLeftX + width) > (bounds.x + bounds.w) then
-      width = (bounds.x + bounds.w) - topLeftX
-    end
-    if (topLeftY + height) > (bounds.y + bounds.h) then
-      height = (bounds.y + bounds.h) - topLeftY
-    end
-
-    --- Set the window to the new location
-    f.x = topLeftX
-    f.y = topLeftY
-    f.w = width
-    f.h = height
-    win:setFrame(f)
-  end
+-- Load those Spoons
+for _, v in pairs(hspoon_list) do
+  hs.loadSpoon(v)
 end
 
 -- Remove animation delay
@@ -56,20 +37,21 @@ bindAppToKey(false, "c", "Google Chrome")
 bindAppToKey(false, "s", "Slack")
 bindAppToKey(false, "i", "iTerm")
 bindAppToKey(false, "e", "Messages")
+bindAppToKey(false, "o", "Notes")
 
 -- Put mac to sleep
 hs.hotkey.bind(mash, "space", function() hs.execute("pmset displaysleepnow") end)
 
 --- Move window to left/right/top/bottom half of the screen
-hs.hotkey.bind(mash, "h", moveWindowPercentOfScreen(0.0,  0.0,  0.5,  1.0))
-hs.hotkey.bind(mash, "l", moveWindowPercentOfScreen(0.5,  0.0,  1.0,  1.0))
-hs.hotkey.bind(mash, "k", moveWindowPercentOfScreen(0.0,  0.0,  1.0,  0.5))
-hs.hotkey.bind(mash, "j", moveWindowPercentOfScreen(0.0,  0.5,  1.0,  1.0))
+hs.hotkey.bind(mash, "h", function() spoon.WinWin:moveAndResize("halfleft") end)
+hs.hotkey.bind(mash, "l", function() spoon.WinWin:moveAndResize("halfright") end)
+hs.hotkey.bind(mash, "k", function() spoon.WinWin:moveAndResize("halfup") end)
+hs.hotkey.bind(mash, "j", function() spoon.WinWin:moveAndResize("halfdown") end)
 
 -- Maximize screen
-hs.hotkey.bind(mash, "m", moveWindowPercentOfScreen(0.0,  0.0,  1.0,  1.0))
+hs.hotkey.bind(mash, "m", function() spoon.WinWin:moveAndResize("fullscreen") end)
 
---- Multiple Monitor Actions ---
+--- Multiple Monitor Actions
 hs.hotkey.bind(mash, "p", function()
   local win = hs.window.focusedWindow()
   win:moveToScreen(win:screen():previous())
