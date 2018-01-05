@@ -119,25 +119,6 @@ ZSH_HIGHLIGHT_STYLES[command]=fg=green,bold
 ZSH_HIGHLIGHT_STYLES[path]=fg=cyan
 ZSH_HIGHLIGHT_STYLES[path_prefix]=fg=cyan
 
-# Powerline settings
-export POWERLINE=/Users/nikhil_narayen/.oh-my-zsh/custom/plugins/powerline-shell/powerline-shell.py
-function powerline_precmd() {
-  PS1="$(${POWERLINE} $? --shell zsh 2> /dev/null)"
-}
-
-function install_powerline_precmd() {
-  for s in "${precmd_functions[@]}"; do
-    if [ "$s" = "powerline_precmd" ]; then
-      return
-    fi
-  done
-  precmd_functions+=(powerline_precmd)
-}
-
-if [ "$TERM" != "linux" ]; then
-  install_powerline_precmd
-fi
-
 # 100ms insert delay for VI Mode
 KEYTIMEOUT=10
 
@@ -163,14 +144,8 @@ bindkey '^w' backward-kill-word
 # [Shift-Tab] - move through the completion menu backwards
 bindkey '^[[Z' reverse-menu-complete
 
-function zle-line-init zle-keymap-select {
-  export VIMODE="${${KEYMAP/vicmd/N}/(main|viins)/I}"
-  powerline_precmd
-  zle reset-prompt
-}
-
-zle -N zle-line-init
-zle -N zle-keymap-select
+# Powerline settings
+source /usr/local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
 
 # Binding keys for zsh-history-subsearch
 zmodload zsh/terminfo
@@ -208,6 +183,10 @@ cdf() {
   local dir
   file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
 }
+
+# Add hub auto completion
+fpath=(~/.oh-my-zsh/completions $fpath)
+autoload -U compinit && compinit
 
 # Only tab complete local branches.
 zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
