@@ -38,9 +38,10 @@ bindAppToKey(false, "s", "Slack")
 bindAppToKey(false, "i", "iTerm")
 bindAppToKey(false, "e", "Messages")
 bindAppToKey(false, "o", "Notes")
+bindAppToKey(false, "x", "Microsoft Excel")
 
 -- Put mac to sleep
-hs.hotkey.bind(mash, "space", function() hs.execute("pmset displaysleepnow") end)
+hs.hotkey.bind(mash, "space", function() hs.caffeinate.systemSleep() end)
 
 --- Move window to left/right/top/bottom half of the screen
 hs.hotkey.bind(mash, "h", function() spoon.WinWin:moveAndResize("halfleft") end)
