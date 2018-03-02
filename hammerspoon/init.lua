@@ -16,14 +16,14 @@ end
 -- Remove animation delay
 hs.window.animationDuration = 0
 
-homeDir=os.getenv("HOME")
+homeDir = os.getenv("HOME")
 function bindAppToKey(useHomeAppPath, key, app)
   local appPath
 
   if useHomeAppPath == true then
-    appPath=homeDir .. "/Applications/" .. app .. ".app"
+    appPath = homeDir .. "/Applications/" .. app .. ".app"
   else
-    appPath=app
+    appPath = app
   end
 
   hs.hotkey.bind(mash, key, function() hs.application.launchOrFocus(appPath) end)
@@ -38,7 +38,8 @@ bindAppToKey(false, "s", "Slack")
 bindAppToKey(false, "i", "iTerm")
 bindAppToKey(false, "e", "Messages")
 bindAppToKey(false, "o", "Notes")
-bindAppToKey(false, "x", "Microsoft Excel")
+bindAppToKey(false, "1", "1Password 6")
+bindAppToKey(false, "d", "IntelliJ IDEA")
 
 -- Put mac to sleep
 hs.hotkey.bind(mash, "space", function() hs.caffeinate.systemSleep() end)
@@ -77,3 +78,14 @@ hs.alert.show("Config loaded")
 hs.hotkey.bind(mash, "a", function()
   hs.hints.windowHints()
 end)
+
+-- Turn bluetooth off/on system sleep
+bluetooth = require("hs._asm.undocumented.bluetooth")
+caffeinate_watcher = hs.caffeinate.watcher.new(function(state)
+  if state == hs.caffeinate.watcher.systemWillSleep then
+    bluetooth.power(false)
+  elseif state == hs.caffeinate.watcher.systemDidWake then
+    bluetooth.power(true)
+  end
+end)
+caffeinate_watcher:start()
