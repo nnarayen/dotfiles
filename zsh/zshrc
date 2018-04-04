@@ -1,0 +1,143 @@
+# Lazy load NVM
+export NVM_LAZY_LOAD=true
+export NVM_NO_USE=true
+
+# Use homebrew python by default.
+export PATH=/usr/local/bin:$PATH
+export PATH="/usr/local/opt/python@2/libexec/bin:$PATH"
+
+# Set custom history file
+HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
+
+# General path settings.
+export PATH=$PATH:/usr/bin
+export PATH=$PATH:/bin
+export PATH=$PATH:/usr/sbin
+export PATH=$PATH:/sbin
+export PATH=$PATH:/opt/X11/bin
+export PATH=$PATH:/usr/local/git/bin
+export PATH=$PATH:/usr/texbin
+
+# Source Prezto
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
+
+# Add zsh aliases
+if [ -f ~/.zsh_aliases ]; then
+  source ~/.zsh_aliases
+fi
+
+# Set colorful terminal
+if [[ $TERM == xterm ]]; then
+  TERM=xterm-256color;
+fi
+
+# User configuration
+setopt NO_NOMATCH
+
+# Neovim as default editor
+export EDITOR='nvim'
+
+# Only tab complete local branches.
+zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
+
+# Ripgrep configuration
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+# Cognito configuration
+[ -f ~/.access/cognito ] && source ~/.access/cognito
+
+###############################################################################
+# FZF
+###############################################################################
+if [[ -f ~/.fzf.zsh ]]; then
+  source ~/.fzf.zsh
+
+  # FZF options
+  export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden --glob "!.git/*"'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_CTRL_R_OPTS='--sort'
+
+  # cdf - cd into the directory of the selected file
+  cdf() {
+    local file
+    local dir
+    file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
+  }
+
+  # FZF to fuzzy search for directory
+  fd() {
+    local dir
+    dir=$(find ${1:-*} -path '*/\.*' -prune \
+                    -o -type d -print 2> /dev/null | fzf +m) &&
+    cd "$dir"
+  }
+fi
+
+###############################################################################
+# Z
+###############################################################################
+if [[ -f /usr/local/etc/profile.d/z.sh ]]; then
+  source /usr/local/etc/profile.d/z.sh
+fi
+
+###############################################################################
+# Vi Mode
+###############################################################################
+bindkey -M viins 'jk' vi-cmd-mode
+bindkey '^?' backward-delete-char
+
+bindkey -M viins "$terminfo[cuu1]" history-substring-search-up
+bindkey -M viins "$terminfo[cud1]" history-substring-search-down
+bindkey -M viins "^u" clear-screen
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+bindkey -M vicmd '^a' beginning-of-line
+bindkey -M vicmd '^e' end-of-line
+bindkey -M vicmd 'H' beginning-of-line
+bindkey -M vicmd 'L' end-of-line
+bindkey -M vicmd 'u' undo
+
+# Make Copy/Paste with the system clipboard behave as expected with vim commands.
+function cutbuffer() {
+  zle .$WIDGET
+  echo -n $CUTBUFFER | pbcopy
+  region_highlight=("0 0 standout")
+}
+
+zle_cut_widgets=(
+  vi-yank
+  vi-yank-eol
+)
+for widget in $zle_cut_widgets
+do
+  zle -N $widget cutbuffer
+done
+
+function putbuffer() {
+  zle copy-region-as-kill "$(pbpaste)"
+  zle .$WIDGET
+}
+
+zle_put_widgets=(
+  vi-put-after
+  vi-put-before
+)
+for widget in $zle_put_widgets
+do
+  zle -N $widget putbuffer
+done
+
+###############################################################################
+# Virtualenv Wrapper
+###############################################################################
+if [ -f /usr/local/bin/virtualenvwrapper.sh ]; then
+  export WORKON_HOME=$HOME/.virtualenvs
+  source /usr/local/bin/virtualenvwrapper.sh
+fi
+
+###############################################################################
+# Powerline
+###############################################################################
+source /usr/local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
