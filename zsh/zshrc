@@ -7,52 +7,24 @@ export ZSH=$HOME/.oh-my-zsh
 # time that oh-my-zsh is loaded.
 ZSH_THEME="nnarayen"
 
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
+# Use homebrew python by default.
+export PATH=/usr/local/bin:$PATH
+export PATH="/usr/local/opt/python@2/libexec/bin:$PATH"
 
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
+# Lazy load NVM
+export NVM_LAZY_LOAD=true
+export NVM_NO_USE=true
 
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
+# All plugins
+plugins=(safe-paste virtualenvwrapper zsh-nvm history-substring-search zsh-syntax-highlighting)
 
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Would you like to use another custom folder than $ZSH/custom?
-# ZSH_CUSTOM=/path/to/new-custom-folder
-
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git safe-paste z virtualenvwrapper zsh-syntax-highlighting history-substring-search)
+export ZSH_PATH=$ZSH/oh-my-zsh.sh
+source $ZSH_PATH
 
 # User configuration
 setopt NO_NOMATCH
 
-# General PATH settings
-export PATH=$PATH:/usr/local/bin
-export PATH=$PATH:/usr/local/sbin
+# General path settings.
 export PATH=$PATH:/usr/bin
 export PATH=$PATH:/bin
 export PATH=$PATH:/usr/sbin
@@ -60,36 +32,6 @@ export PATH=$PATH:/sbin
 export PATH=$PATH:/opt/X11/bin
 export PATH=$PATH:/usr/local/git/bin
 export PATH=$PATH:/usr/texbin
-
-# Add Yubikey to PATH
-export PATH=$PATH:/opt/airbnb/bin
-
-source $ZSH/oh-my-zsh.sh
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Add zsh aliases
 if [ -f ~/.zsh_aliases ]; then
@@ -109,7 +51,10 @@ export FZF_CTRL_R_OPTS='--sort'
 # Neovim as default editor
 export EDITOR='nvim'
 
-# Custom Highlighting Colors
+# Source z script
+source /usr/local/etc/profile.d/z.sh
+
+# Zsh highlighting colors
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 
 ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red,bold
@@ -137,15 +82,43 @@ bindkey -M vicmd '^a' beginning-of-line
 bindkey -M vicmd '^e' end-of-line
 bindkey -M vicmd 'H' beginning-of-line
 bindkey -M vicmd 'L' end-of-line
+bindkey -M vicmd 'u' undo
 
-# Ctrl-w removed word backwards
+# Make Copy/Paste with the system clipboard behave as expected with vim commands.
+function cutbuffer() {
+  zle .$WIDGET
+  echo -n $CUTBUFFER | pbcopy
+  region_highlight=("0 0 standout")
+}
+
+zle_cut_widgets=(
+  vi-yank
+  vi-yank-eol
+)
+for widget in $zle_cut_widgets
+do
+  zle -N $widget cutbuffer
+done
+
+function putbuffer() {
+  zle copy-region-as-kill "$(pbpaste)"
+  zle .$WIDGET
+}
+
+zle_put_widgets=(
+  vi-put-after
+  vi-put-before
+)
+for widget in $zle_put_widgets
+do
+  zle -N $widget putbuffer
+done
+
+# Ctrl-W removed word backwards
 bindkey '^w' backward-kill-word
 
 # [Shift-Tab] - move through the completion menu backwards
 bindkey '^[[Z' reverse-menu-complete
-
-# Powerline settings
-source /usr/local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
 
 # Binding keys for zsh-history-subsearch
 zmodload zsh/terminfo
@@ -191,8 +164,11 @@ autoload -U compinit && compinit
 # Only tab complete local branches.
 zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
 
-# Java setup
-export JAVA7_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home
-export JAVA8_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_101.jdk/Contents/Home
-export JAVA_HOME=$JAVA8_HOME
-export PATH=$JAVA_HOME/bin:$PATH
+# Ripgrep configuration
+export RIPGREP_CONFIG_PATH="/Users/nikhilnarayen/.ripgreprc"
+
+# Cognito configuration
+[ -f ~/.access/cognito ] && source ~/.access/cognito
+
+# Powerline settings
+source /usr/local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
