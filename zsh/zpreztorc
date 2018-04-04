@@ -1,0 +1,64 @@
+# vim: set ft=zsh:
+###############################################################################
+# General
+###############################################################################
+
+# Color output (auto set to 'no' on dumb terminals).
+zstyle ':prezto:*:*' color 'yes'
+
+# Set the Prezto modules to load (browse modules).
+# The order matters.
+zstyle ':prezto:load' pmodule \
+  'environment' \
+  'terminal' \
+  'editor' \
+  'history' \
+  'directory' \
+  'spectrum' \
+  'utility' \
+  'completion' \
+  'zsh-nvm' \
+  'syntax-highlighting' \
+  'history-substring-search'
+
+###############################################################################
+# Editor
+###############################################################################
+
+# Set the key mapping style to 'emacs' or 'vi'.
+zstyle ':prezto:module:editor' key-bindings 'vi'
+
+KEYTIMEOUT=10
+
+###############################################################################
+# Terminal
+###############################################################################
+
+# Auto set the tab and window titles.
+zstyle ':prezto:module:terminal' auto-title 'yes'
+
+###############################################################################
+# History Substring Search
+###############################################################################
+
+# Set the query found color.
+zstyle ':prezto:module:history-substring-search:color' found 'fg=green,bold'
+
+# Set the query not found color.
+zstyle ':prezto:module:history-substring-search:color' not-found 'fg=red,bold'
+
+###############################################################################
+# Syntax Highlighting
+###############################################################################
+
+zstyle ':prezto:module:syntax-highlighting' highlighters \
+  'main' \
+  'brackets'
+
+zstyle ':prezto:module:syntax-highlighting' styles \
+  'unknown-token' 'fg=red,bold' \
+  'reserved-word' 'fg=green,bold' \
+  'alias' 'fg=green,bold' \
+  'command' 'fg=green,bold' \
+  'path' 'fg=cyan' \
+  'path_prefix' 'fg=cyan'
