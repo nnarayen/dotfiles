@@ -62,3 +62,13 @@ zstyle ':prezto:module:syntax-highlighting' styles \
   'command' 'fg=green,bold' \
   'path' 'fg=cyan' \
   'path_prefix' 'fg=cyan'
+
+###############################################################################
+# Utility
+###############################################################################
+
+# Define colors for BSD ls
+export LSCOLORS='GxfxcxdxbxGxDxgabaxxxx'
+
+# Define colors for completion system
+export LS_COLORS='di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
