@@ -1,27 +1,36 @@
+###############################################################################
+# Plugin configuration
+###############################################################################
+
 # Lazy load NVM
 export NVM_LAZY_LOAD=true
 export NVM_NO_USE=true
 
-# Use homebrew python by default.
-export PATH=/usr/local/bin:$PATH
-export PATH="/usr/local/opt/python@2/libexec/bin:$PATH"
-
-# Set custom history file
-HISTFILE="${ZDOTDIR:-$HOME}/.zsh_history"
-
-# General path settings.
+###############################################################################
+# Path configuration
+###############################################################################
 export PATH=$PATH:/usr/bin
+export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:/bin
 export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
-export PATH=$PATH:/opt/X11/bin
 export PATH=$PATH:/usr/local/git/bin
 export PATH=$PATH:/usr/texbin
+export PATH=$PATH:$HOME/.webtau
 
+# Use homebrew python by default.
+export PATH=/usr/local/bin:$PATH
+
+###############################################################################
 # Source Prezto
+###############################################################################
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
+
+###############################################################################
+# Miscellany
+###############################################################################
 
 # Add zsh aliases
 if [ -f ~/.zsh_aliases ]; then
@@ -34,19 +43,17 @@ if [[ $TERM == xterm ]]; then
 fi
 
 # User configuration
-setopt NO_NOMATCH
+setopt NONOMATCH
+setopt NOCORRECT
 
 # Neovim as default editor
 export EDITOR='nvim'
 
-# Only tab complete local branches.
-zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
-
 # Ripgrep configuration
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
-# Cognito configuration
-[ -f ~/.access/cognito ] && source ~/.access/cognito
+# Only autocomplete local branches
+zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
 
 ###############################################################################
 # FZF
@@ -76,11 +83,23 @@ if [[ -f ~/.fzf.zsh ]]; then
 fi
 
 ###############################################################################
-# Z
+# FASD
 ###############################################################################
-if [[ -f /usr/local/etc/profile.d/z.sh ]]; then
-  source /usr/local/etc/profile.d/z.sh
-fi
+eval "$(fasd --init zsh-hook)"
+
+# More lenient fuzzy matching
+_FASD_FUZZY=8
+
+fasd_cd() {
+  if [ $# -le 1 ]; then
+    fasd "$@"
+  else
+    local _fasd_ret="$(fasd -e echo "$@")"
+    [ -z "$_fasd_ret" ] && return
+    [ -d "$_fasd_ret" ] && cd "$_fasd_ret" || echo "$_fasd_ret"
+  fi
+}
+alias z="fasd_cd -d"
 
 ###############################################################################
 # Vi Mode
@@ -99,7 +118,7 @@ bindkey -M vicmd 'H' beginning-of-line
 bindkey -M vicmd 'L' end-of-line
 bindkey -M vicmd 'u' undo
 
-# Make Copy/Paste with the system clipboard behave as expected with vim commands.
+# Make copy/paste with the system clipboard behave as expected with vim commands.
 function cutbuffer() {
   zle .$WIDGET
   echo -n $CUTBUFFER | pbcopy
@@ -129,6 +148,10 @@ do
   zle -N $widget putbuffer
 done
 
+# Edit command in vim
+zle -N edit-command-line
+bindkey -M vicmd E edit-command-line
+
 ###############################################################################
 # Virtualenv Wrapper
 ###############################################################################
@@ -140,4 +163,5 @@ fi
 ###############################################################################
 # Powerline
 ###############################################################################
+export POWERLINE_COMMAND=$HOME/.local/bin/powerline-hs
 source /usr/local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
