@@ -28,32 +28,38 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'yssl/QFEnter'
+Plug 'wellle/targets.vim'
+Plug 'rhysd/clever-f.vim'
+
+" Autocomplete
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch' : 'next',
+    \ 'do'     : 'bash install.sh',
+    \ }
 
 " Post installation hooks
-Plug 'junegunn/fzf',         { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'}
+Plug 'junegunn/fzf',         { 'dir': '~/.fzf', 'do': './install --all' }
 
 " Language specific plugins
-Plug 'tpope/vim-rails',    { 'for' : 'ruby' }
-Plug 'autowitch/hive.vim', { 'for' : 'hive.hql' }
+Plug 'autowitch/hive.vim',      { 'for': 'hive.hql' }
+Plug 'tpope/vim-rails',         { 'for': 'ruby' }
 
 " Command specific plugins
-Plug 'scrooloose/nerdtree',       { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
 Plug 'easymotion/vim-easymotion', { 'on': ['<Plug>(easymotion-prefix)'] }
-Plug 'tomtom/tcomment_vim',       { 'on': ['TComment'] }
 Plug 'machakann/vim-swap',        { 'on': ['<Plug>(swap-prev)', '<Plug>(swap-next)'] }
+Plug 'scrooloose/nerdtree',       { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
+Plug 'tomtom/tcomment_vim',       { 'on': ['TComment'] }
 
 " End plug
 call plug#end()
-filetype plugin indent on    " Required for plugins
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " General Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Color settings
-colorscheme kolor
-syntax on
-set bg=dark
+set background=dark
+colorscheme onehalfdark
 
 " Local Leader
 let maplocalleader=' '        " All my macros start with <Space>
@@ -70,6 +76,8 @@ set lazyredraw                " Don't redraw when don't have to
 set showmode
 set showcmd
 set cursorline
+set noswapfile
+set synmaxcol=200
 
 " Scrolling
 set sidescrolloff=5           " Keep at least 5 lines left/right
@@ -88,6 +96,7 @@ set list listchars=tab:\ \ ,trail:·
 autocmd BufNewFile,BufRead * setlocal formatoptions+=t
 
 " File specific line widths
+autocmd BufNewFile,BufReadPre *.js,*.jsx setlocal textwidth=100
 autocmd BufNewFile,BufReadPre *.java setlocal textwidth=100
 autocmd BufNewFile,BufReadPre *.tex setlocal textwidth=80
 autocmd BufNewFile,BufReadPre *.rb,*.rake setlocal textwidth=100
@@ -211,9 +220,6 @@ cnoreabbrev wQ wq
 " Avoid ex mode
 nnoremap Q <nop>
 
-" Easier tag jumping
-nmap <LocalLeader>x <C-]>
-
 " Reload files on focus
 au FocusGained * if &autoread | silent checktime | endif
 
@@ -255,6 +261,11 @@ function! ExecuteMacroOverVisualRange()
   execute ":'<,'>normal @".nr2char(getchar())
 endfunction
 
+" Determine highlight group
+nmap <LocalLeader>h :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+  \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+  \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Easy Motion
 """""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -276,10 +287,10 @@ nmap <LocalLeader>a :Rg<Space>
 nmap <LocalLeader>. :Tags<CR>
 
 " Use ripgrep for code searching
-command! -bang -nargs=* Rg call fzf#vim#grep('rg --colors "path:fg:green" --colors "path:style:bold" -S --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1, fzf#vim#with_preview('right:50%:hidden', '?'), <bang>0)
+command! -bang -nargs=* Rg call fzf#vim#grep('rg --hidden --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1, fzf#vim#with_preview('right:50%:hidden', '?'), <bang>0)
 
 " Search for word under cursor
-nmap S :Rg (self\.)?<C-R><C-W><CR>
+nmap S :Rg <C-R><C-W><CR>
 
 " Open windows in splits
 let g:fzf_action = {
@@ -396,10 +407,12 @@ imap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "<S-Tab>"
 """"""""""""""""""""""""""""""""""""
 " Neomake
 """"""""""""""""""""""""""""""""""""
+call neomake#configure#automake('w')
+
 let g:neomake_open_list = 2
 let g:neomake_warning_sign={'text': '>>', 'texthl': 'Conditional'}
 let g:neomake_error_sign={'text': '>>', 'texthl': 'ErrorMsg'}
-let g:neomake_python_enabled_makers = ['flake8']
+let g:neomake_python_enabled_makers = []
 let g:neomake_ruby_enabled_makers = ['rubocop']
 let g:neomake_java_enabled_makers = []
 
@@ -418,8 +431,6 @@ let g:neomake_jsx_eslint_maker = {
   \ 'errorformat': '%f: line %l\, col %c\, %m',
 \ }
 
-autocmd! BufWritePost * Neomake
-
 """"""""""""""""""""""""""""""""""""
 " Auto Pairs
 """"""""""""""""""""""""""""""""""""
@@ -431,16 +442,18 @@ let g:AutoPairsMultilineClose = 0
 nmap <silent> <LocalLeader>gs :Gstatus<CR>
 nmap <silent> <LocalLeader>gd :Gdiff<CR>
 nmap <silent> <LocalLeader>gc :Gcommit<CR>
+nmap <silent> <LocalLeader>gp :Gpush<CR>
 nmap <silent> <LocalLeader>gb :Gblame<CR>
 nmap <silent> <LocalLeader>gr :Gbrowse<CR>
 vmap <silent> <LocalLeader>gr :Gbrowse<CR>
 
-let g:fugitive_github_domains = ['github.com', 'git.musta.ch']
+" let g:fugitive_github_domains = ['github.com']
 
 """"""""""""""""""""""""""""""""""""
 " GitGutter
 """"""""""""""""""""""""""""""""""""
 nmap <LocalLeader>hn <Plug>GitGutterNextHunk
+nmap <LocalLeader>hs <Plug>GitGutterStageHunk
 nmap <LocalLeader>hu <Plug>GitGutterUndoHunk
 
 """"""""""""""""""""""""""""""""""""
@@ -466,3 +479,21 @@ let g:splitjoin_python_brackets_on_separate_lines = 1
 """"""""""""""""""""""""""""""""""""
 nmap gh <Plug>(swap-prev)
 nmap gl <Plug>(swap-next)
+
+""""""""""""""""""""""""""""""""""""
+" Clever-F
+""""""""""""""""""""""""""""""""""""
+let g:clever_f_across_no_line = 1
+let g:clever_f_fix_key_direction = 1
+
+""""""""""""""""""""""""""""""""""""
+" Language Client
+""""""""""""""""""""""""""""""""""""
+set completeopt-=preview
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_serverCommands = {
+  \ 'python': ['pyls'],
+  \ }
+let g:LanguageClient_settingsPath = "~/.config/nvim/settings.json"
+nnoremap <silent> <LocalLeader>x :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <LocalLeader>v :call LanguageClient#textDocument_formatting()<CR>
