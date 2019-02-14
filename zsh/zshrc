@@ -17,6 +17,7 @@ export PATH=$PATH:/sbin
 export PATH=$PATH:/usr/local/git/bin
 export PATH=$PATH:/usr/texbin
 export PATH=$PATH:$HOME/.webtau
+export PATH=$PATH:$HOME/go/bin
 
 # Use homebrew python by default.
 export PATH=/usr/local/bin:$PATH
@@ -55,6 +56,11 @@ export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 # Only autocomplete local branches
 zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
 
+# Bintray setup
+if [ -f ~/.access/.zsh_bintray ]; then
+  source ~/.access/.zsh_bintray
+fi
+
 ###############################################################################
 # FZF
 ###############################################################################
@@ -71,14 +77,6 @@ if [[ -f ~/.fzf.zsh ]]; then
     local file
     local dir
     file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
-  }
-
-  # FZF to fuzzy search for directory
-  fd() {
-    local dir
-    dir=$(find ${1:-*} -path '*/\.*' -prune \
-                    -o -type d -print 2> /dev/null | fzf +m) &&
-    cd "$dir"
   }
 fi
 
