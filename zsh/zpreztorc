@@ -1,74 +1,203 @@
-# vim: set ft=zsh:
-###############################################################################
-# General
-###############################################################################
-
-# Color output (auto set to 'no' on dumb terminals).
-zstyle ':prezto:*:*' color 'yes'
-
-# Set the Prezto modules to load (browse modules).
-# The order matters.
-zstyle ':prezto:load' pmodule \
-  'environment' \
-  'terminal' \
-  'editor' \
-  'history' \
-  'directory' \
-  'spectrum' \
-  'utility' \
-  'completion' \
-  'zsh-nvm' \
-  'syntax-highlighting' \
-  'history-substring-search'
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 ###############################################################################
-# Editor
+# Path configuration
 ###############################################################################
+export PATH=$PATH:/usr/bin
+export PATH=$PATH:$HOME/.local/bin
+export PATH=$PATH:/bin
+export PATH=$PATH:/usr/sbin
+export PATH=$PATH:/sbin
+export PATH=$PATH:/usr/local/git/bin
+export PATH=$PATH:/usr/texbin
+export PATH=$PATH:$HOME/.webtau
+export PATH=$PATH:$HOME/go/bin
+export PATH=/usr/local/opt/curl/bin:$PATH
 
-# Set the key mapping style to 'emacs' or 'vi'.
-zstyle ':prezto:module:editor' key-bindings 'vi'
+# Use homebrew python by default.
+export PATH=/usr/local/bin:$PATH
 
-KEYTIMEOUT=10
-
-###############################################################################
-# Terminal
-###############################################################################
-
-# Auto set the tab and window titles.
-zstyle ':prezto:module:terminal' auto-title 'yes'
-
-###############################################################################
-# History Substring Search
-###############################################################################
-
-# Set the query found color.
-zstyle ':prezto:module:history-substring-search:color' found 'fg=green,bold'
-
-# Set the query not found color.
-zstyle ':prezto:module:history-substring-search:color' not-found 'fg=red,bold'
+# Use legacy HISTFILE for command search
+export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"
 
 ###############################################################################
-# Syntax Highlighting
+# Source Prezto
 ###############################################################################
-
-zstyle ':prezto:module:syntax-highlighting' highlighters \
-  'main' \
-  'brackets'
-
-zstyle ':prezto:module:syntax-highlighting' styles \
-  'unknown-token' 'fg=red,bold' \
-  'reserved-word' 'fg=green,bold' \
-  'alias' 'fg=green,bold' \
-  'command' 'fg=green,bold' \
-  'path' 'fg=cyan' \
-  'path_prefix' 'fg=cyan'
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+fi
 
 ###############################################################################
-# Utility
+# Miscellany
 ###############################################################################
 
-# Define colors for BSD ls
-export LSCOLORS='GxfxcxdxbxGxDxgabaxxxx'
+# Add zsh aliases
+if [ -f ~/.zsh_aliases ]; then
+  source ~/.zsh_aliases
+fi
 
-# Define colors for completion system
-export LS_COLORS='di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+# Set colorful terminal
+if [[ $TERM == xterm ]]; then
+  TERM=xterm-256color;
+fi
+
+# User configuration
+setopt NONOMATCH
+setopt NOCORRECT
+
+# Neovim as default editor
+export EDITOR='nvim'
+
+# Ripgrep configuration
+export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+# Only autocomplete local branches
+zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
+
+# Bintray setup
+if [ -f ~/.access/.zsh_bintray ]; then
+  source ~/.access/.zsh_bintray
+fi
+
+###############################################################################
+# FZF
+###############################################################################
+if [[ -f ~/.fzf.zsh ]]; then
+  source ~/.fzf.zsh
+
+  # FZF options
+  export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden --glob "!.git/*"'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_CTRL_R_OPTS='--sort'
+
+  # cdf - cd into the directory of the selected file
+  cdf() {
+    local file
+    local dir
+    file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
+  }
+fi
+
+# cw - Switch tmux window
+cw() {
+  local current_window target target_window
+  windows=$(tmux list-windows -F '#I|#{window_name}')
+  current_window=$(tmux display-message -p '#I')
+
+  target=$(echo "$windows" | grep -v "$current_window" | fzf +m --reverse) || return
+  target_window=$(echo $target | awk 'BEGIN{FS="\\|"} {print$1}')
+
+  if [[ $current_window -ne $target_window ]]; then
+    tmux select-window -t $target_window
+  fi
+}
+
+###############################################################################
+# FASD
+###############################################################################
+eval "$(fasd --init zsh-hook)"
+
+# More lenient fuzzy matching
+_FASD_FUZZY=8
+
+fasd_cd() {
+  if [ $# -le 1 ]; then
+    fasd "$@"
+  else
+    local _fasd_ret="$(fasd -e echo "$@")"
+    [ -z "$_fasd_ret" ] && return
+    [ -d "$_fasd_ret" ] && cd "$_fasd_ret" || echo "$_fasd_ret"
+  fi
+}
+alias z="fasd_cd -d"
+
+###############################################################################
+# Vi Mode
+###############################################################################
+bindkey -M viins 'jk' vi-cmd-mode
+bindkey '^?' backward-delete-char
+
+bindkey -M viins "$terminfo[cuu1]" history-substring-search-up
+bindkey -M viins "$terminfo[cud1]" history-substring-search-down
+bindkey -M viins "^u" clear-screen
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+bindkey -M vicmd '^a' beginning-of-line
+bindkey -M vicmd '^e' end-of-line
+bindkey -M vicmd 'H' beginning-of-line
+bindkey -M vicmd 'L' end-of-line
+bindkey -M vicmd 'u' undo
+
+# Make copy/paste with the system clipboard behave as expected with vim commands.
+function cutbuffer() {
+  zle .$WIDGET
+  echo -n $CUTBUFFER | pbcopy
+  region_highlight=("0 0 standout")
+}
+
+zle_cut_widgets=(
+  vi-yank
+  vi-yank-eol
+)
+for widget in $zle_cut_widgets
+do
+  zle -N $widget cutbuffer
+done
+
+function putbuffer() {
+  zle copy-region-as-kill "$(pbpaste)"
+  zle .$WIDGET
+}
+
+zle_put_widgets=(
+  vi-put-after
+  vi-put-before
+)
+for widget in $zle_put_widgets
+do
+  zle -N $widget putbuffer
+done
+
+# Edit command in vim
+zle -N edit-command-line
+bindkey -M vicmd E edit-command-line
+
+###############################################################################
+# asdf
+###############################################################################
+export ASDF_DIR="/usr/local/opt/asdf"
+source $ASDF_DIR/asdf.sh
+source $ASDF_DIR/etc/bash_completion.d/asdf.bash
+
+# Java setup
+alias sjh="source $HOME/.asdf/plugins/java/set-java-home.sh"
+
+###############################################################################
+# Clang
+###############################################################################
+export PATH="/usr/local/opt/llvm/bin:$PATH"
+
+###############################################################################
+# Virtualenv Wrapper
+###############################################################################
+local python="$(asdf where python $(asdf current python))/bin"
+local virtualenv_script="$python/virtualenvwrapper.sh"
+if [ -f $virtualenv_lazy ]; then
+  export WORKON_HOME=$HOME/.virtualenvs
+  source $virtualenv_script
+fi
+
+###############################################################################
+# IQPL
+###############################################################################
+eval $(iqplup vars)
+
+###############################################################################
+# Powerline10k
+###############################################################################
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
