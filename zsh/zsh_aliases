@@ -1,0 +1,98 @@
+# Config files
+alias ev="vim ~/.config/nvim/init.vim"
+alias ez="vim ~/.zshrc"
+alias ezp="vim ~/.zpreztorc"
+alias ea="vim ~/.zsh_aliases"
+alias eh="vim ~/.hammerspoon/init.lua"
+alias et="vim ~/.tmux.conf"
+alias er="vim ~/.ripgreprc"
+alias eac="vim ~/.config/alacritty/alacritty.yml"
+
+# Miscellany
+alias git="hub"
+alias vim="nvim"
+alias update="source ~/.zshrc && source ~/.zsh_aliases"
+alias sdc="source ~/.access/aws_docker_creds"
+alias cat="bat"
+
+# Format JSON file
+jqf() {
+  filename=/tmp/$(cat /dev/urandom | base64 | tr -dc '0-9a-zA-Z' | head -c5)
+  touch ${filename}
+  cat $1 | jq '.' > filename
+  mv filename $1
+}
+
+# Tmux
+alias tm="tmux new -s"
+alias tmc="tmux new -s code"
+alias tml="tmux ls"
+alias tmk="tmux kill-session -t"
+alias tma="tmux attach -t"
+
+# Git
+alias gp="git pull"
+alias gpf="git push -f"
+alias gbd="git branch -D"
+alias gs="git status"
+alias gcl="git checkout -"
+alias gca="git commit --amend --no-edit"
+alias gcaa="git commit --amend --no-edit -a"
+alias gd="git diff"
+alias gcm="git checkout master"
+alias gcd="git checkout develop"
+alias gdo="git diff origin/master"
+alias grm="git rebase master"
+alias grd="git rebase develop"
+alias grc="git rebase --continue"
+alias gb="git branch"
+alias gco="git checkout"
+alias gsp="git stash pop"
+alias gcb="git checkout -b"
+alias gl="git log"
+
+# Git rebase
+rbi() {
+  git rebase -i HEAD~$1
+}
+
+# Get set upstream
+gsa() {
+  git branch --set-upstream-to=origin/$1 $1
+}
+
+# Create release
+gcr() {
+  git pull-request -b master -m "release/$1" -m "https://github.com/tsiq/product-platform/releases/tag/$1"
+}
+
+# Bazelisk
+alias bazel="bazelisk"
+
+# Maven
+alias mvci="mvn clean install"
+alias mvi="mvn install"
+
+# Virtualenv
+alias dv="deactivate"
+
+# ZSH specific aliases
+if [ -n "$ZSH_VERSION" ]; then
+  alias -g sT="-DskipTests"
+  alias -g cJ='-H "Content-type: application/json"'
+  alias -g cM='-H "Content-type: multipart/form-data"'
+  alias -g cO='-H "Content-type: application/octet-stream"'
+  alias -g cG='-H "Content-Encoding: gzip"'
+  alias -g xP='-X POST'
+  alias -g xD='-X DELETE'
+  alias -g aO='-H "Accept: application/octet-stream"'
+  alias -g lT='--location-trusted'
+fi
+
+# Docker
+alias dsa="docker stop \$(docker ps -q)"
+
+# Authorization aliases
+if [ -f ~/.access/.zsh_okta_aliases ]; then
+  source ~/.access/.zsh_okta_aliases
+fi
