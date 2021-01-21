@@ -1,0 +1,37 @@
+{
+  "diagnostic.virtualText": true,
+  "diagnostic.virtualTextLines": 1,
+  "diagnostic.virtualTextCurrentLineOnly": false,
+  "diagnostic.enableMessage": "never",
+  "languageserver": {
+    "python": {
+      "command": "python",
+      "args": [
+        "-mpyls",
+        "-vv",
+        "--log-file",
+        "/tmp/lsp_python.log"
+      ],
+      "filetypes": [
+        "python"
+      ],
+      "settings": {
+        "pyls": {
+          "plugins": {
+            "pyflakes": {
+              "enabled": true
+            }
+          }
+        }
+      }
+    },
+    "golang": {
+      "command": "/Users/nikhilnarayen/.asdf/installs/golang/1.14.1/packages/bin/gopls",
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+      "filetypes": ["go"],
+      "initializationOptions": {
+        "usePlaceholders": true
+      }
+    }
+  }
+}
