@@ -4,12 +4,10 @@
 call plug#begin('~/.config/nvim/bundle/')
 
 " Plugins
-Plug 'AndrewRadev/splitjoin.vim'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'Shougo/neosnippet.vim'
 Plug 'airblade/vim-gitgutter'
-Plug 'benekastah/neomake'
 Plug 'bling/vim-airline'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'jiangmiao/auto-pairs'
@@ -31,15 +29,9 @@ Plug 'yssl/QFEnter'
 Plug 'wellle/targets.vim'
 Plug 'rhysd/clever-f.vim'
 
-" Autocomplete
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch' : 'next',
-    \ 'do'     : 'bash install.sh',
-    \ }
-
 " Post installation hooks
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'}
-Plug 'junegunn/fzf',         { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf',      { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
 " Language specific plugins
 Plug 'autowitch/hive.vim',      { 'for': 'hive.hql' }
@@ -146,17 +138,23 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " Kill any trailing whitespace on save (credit to FB)
+let g:strip_whitespace = 1
 function! <SID>StripTrailingWhitespaces()
-  let l = line(".")
-  let c = col(".")
-  %s/\s\+$//e
-  call cursor(l, c)
+  if exists('g:strip_whitespace')
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
+  endif
 endfunction
 
 let g:kill_whitespace_blacklist = ["neosnippet"]
 if index(g:kill_whitespace_blacklist, &ft) < 0
   au BufWritePre * :call <SID>StripTrailingWhitespaces()
 endif
+
+" Convert all tabs to spaces
+nmap <LocalLeader>T :retab<cr>
 
 " Close all quickfix windows
 autocmd FileType qf nnoremap <buffer> q :q<CR>
@@ -274,9 +272,9 @@ map <LocalLeader> <Plug>(easymotion-prefix)
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " TComment
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:tcommentMapLeader1 = ''
-let g:tcommentMapLeader2 = ''
-let g:tcommentMapLeaderCommentAnyway = ''
+let g:tcomment_mapleader1 = ''
+let g:tcomment_mapleader2 = ''
+let g:tcomment_mapleader_comment_anyway = ''
 map <LocalLeader>c :TComment<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -333,11 +331,6 @@ let g:airline#extensions#tabline#show_tab_type = 0
 let g:tmuxline_theme = 'zenburn'
 let g:tmuxline_preset = 'nikhil'
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Vim-Rails
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-au Filetype ruby nnoremap gd gf
-
 """"""""""""""""""""""""""""""""""""
 " QFEnter
 """"""""""""""""""""""""""""""""""""
@@ -365,24 +358,6 @@ xmap x <Plug>MoveMotionXPlug
 nmap dd <Plug>MoveMotionLinePlug
 
 """"""""""""""""""""""""""""""""""""
-" Deoplete
-""""""""""""""""""""""""""""""""""""
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#auto_complete_start_length = 3
-let g:deoplete#file#enable_buffer_path = 1
-let g:deoplete#buffer#require_same_filetype = 0
-let g:deoplete#ignore_sources = {}
-let g:deoplete#ignore_sources._ = ["neosnippet"]
-
-function! Multiple_cursors_before()
-  let b:deoplete_disable_auto_complete = 1
-endfunction
-
-function! Multiple_cursors_after()
-  let b:deoplete_disable_auto_complete = 0
-endfunction
-
-""""""""""""""""""""""""""""""""""""
 " Neosnippets
 """"""""""""""""""""""""""""""""""""
 function! s:neosnippet_complete()
@@ -405,33 +380,6 @@ xmap <expr><TAB> <SID>neosnippet_complete()
 imap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "<S-Tab>"
 
 """"""""""""""""""""""""""""""""""""
-" Neomake
-""""""""""""""""""""""""""""""""""""
-call neomake#configure#automake('w')
-
-let g:neomake_open_list = 2
-let g:neomake_warning_sign={'text': '>>', 'texthl': 'Conditional'}
-let g:neomake_error_sign={'text': '>>', 'texthl': 'ErrorMsg'}
-let g:neomake_python_enabled_makers = []
-let g:neomake_ruby_enabled_makers = ['rubocop']
-let g:neomake_java_enabled_makers = []
-
-" Custom setup for javascript
-let g:neomake_javascript_enabled_makers = ['eslint']
-let g:neomake_jsx_enabled_makers = ['eslint']
-let g:neomake_javascript_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
-let g:neomake_jsx_eslint_exe = system('PATH=$(npm bin):$PATH && which eslint | tr -d "\n"')
-let g:neomake_javascript_eslint_maker = {
-  \ 'args': ['--no-color', '--format', 'compact', '--quiet'],
-  \ 'errorformat': '%f: line %l\, col %c\, %m',
-\ }
-
-let g:neomake_jsx_eslint_maker = {
-  \ 'args': ['--no-color', '--format', 'compact', '--quiet'],
-  \ 'errorformat': '%f: line %l\, col %c\, %m',
-\ }
-
-""""""""""""""""""""""""""""""""""""
 " Auto Pairs
 """"""""""""""""""""""""""""""""""""
 let g:AutoPairsMultilineClose = 0
@@ -439,7 +387,7 @@ let g:AutoPairsMultilineClose = 0
 """"""""""""""""""""""""""""""""""""
 " Fugitive
 """"""""""""""""""""""""""""""""""""
-nmap <silent> <LocalLeader>gs :Gstatus<CR>
+nmap <silent> <LocalLeader>gs :Gstatus<CR>gg<C-n>
 nmap <silent> <LocalLeader>gd :Gdiff<CR>
 nmap <silent> <LocalLeader>gc :Gcommit<CR>
 nmap <silent> <LocalLeader>gp :Gpush<CR>
@@ -447,32 +395,19 @@ nmap <silent> <LocalLeader>gb :Gblame<CR>
 nmap <silent> <LocalLeader>gr :Gbrowse<CR>
 vmap <silent> <LocalLeader>gr :Gbrowse<CR>
 
-" let g:fugitive_github_domains = ['github.com']
+let g:fugitive_github_domains = ['github.com']
 
 """"""""""""""""""""""""""""""""""""
 " GitGutter
 """"""""""""""""""""""""""""""""""""
-nmap <LocalLeader>hn <Plug>GitGutterNextHunk
-nmap <LocalLeader>hs <Plug>GitGutterStageHunk
-nmap <LocalLeader>hu <Plug>GitGutterUndoHunk
+nmap <LocalLeader>hn <Plug>(GitGutterNextHunk)
+nmap <LocalLeader>hs <Plug>(GitGutterStageHunk)
+nmap <LocalLeader>hu <Plug>(GitGutterUndoHunk)
 
 """"""""""""""""""""""""""""""""""""
 " VimPasta
 """"""""""""""""""""""""""""""""""""
 let g:pasta_disabled_filetypes = ["coffee", "markdown", "yaml", "slim", "nerdtree"]
-
-""""""""""""""""""""""""""""""""""""
-" SplitJoin
-""""""""""""""""""""""""""""""""""""
-let g:splitjoin_split_mapping = ''
-let g:splitjoin_join_mapping = ''
-
-nmap <LocalLeader>k :SplitjoinJoin<cr>
-nmap <LocalLeader>j :SplitjoinSplit<cr>
-
-let g:splitjoin_trailing_comma = 1
-let g:splitjoin_ruby_hanging_args = 0
-let g:splitjoin_python_brackets_on_separate_lines = 1
 
 """"""""""""""""""""""""""""""""""""
 " Vim Swap
@@ -487,13 +422,8 @@ let g:clever_f_across_no_line = 1
 let g:clever_f_fix_key_direction = 1
 
 """"""""""""""""""""""""""""""""""""
-" Language Client
+" Coc
 """"""""""""""""""""""""""""""""""""
-set completeopt-=preview
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_serverCommands = {
-  \ 'python': ['pyls'],
-  \ }
-let g:LanguageClient_settingsPath = "~/.config/nvim/settings.json"
-nnoremap <silent> <LocalLeader>x :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <LocalLeader>v :call LanguageClient#textDocument_formatting()<CR>
+nmap <silent> <LocalLeader>x <Plug>(coc-definition)
+nmap <silent> <LocalLeader>v <Plug>(coc-format)
+nmap <LocalLeader>R :CocRestart<cr>
