@@ -4,44 +4,54 @@
 call plug#begin('~/.config/nvim/bundle/')
 
 " Plugins
-Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'Shougo/neosnippet-snippets'
-Plug 'Shougo/neosnippet.vim'
-Plug 'airblade/vim-gitgutter'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'lewis6991/gitsigns.nvim'
 Plug 'bling/vim-airline'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'jiangmiao/auto-pairs'
-Plug 'junegunn/fzf.vim'
 Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/vim-slash'
-Plug 'sheerun/vim-polyglot'
 Plug 'sickill/vim-pasta'
 Plug 'svermeulen/vim-easyclip'
-Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-endwise'
+Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'yssl/QFEnter'
 Plug 'wellle/targets.vim'
 Plug 'rhysd/clever-f.vim'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'kyazdani42/nvim-tree.lua'
+Plug 'phaazon/hop.nvim'
+Plug 'junegunn/fzf.vim'
+
+" Lanugage specific plugins
+Plug 'cappyzawa/starlark.vim', { 'for': 'starlark' }
 
 " Post installation hooks
 Plug 'junegunn/fzf',      { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-
-" Language specific plugins
-Plug 'autowitch/hive.vim',      { 'for': 'hive.hql' }
-Plug 'tpope/vim-rails',         { 'for': 'ruby' }
+" Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
 " Command specific plugins
-Plug 'easymotion/vim-easymotion', { 'on': ['<Plug>(easymotion-prefix)'] }
 Plug 'machakann/vim-swap',        { 'on': ['<Plug>(swap-prev)', '<Plug>(swap-next)'] }
-Plug 'scrooloose/nerdtree',       { 'on': ['NERDTreeFind', 'NERDTreeToggle'] }
 Plug 'tomtom/tcomment_vim',       { 'on': ['TComment'] }
+
+Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate'}
+
+" LSP
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'L3MON4D3/LuaSnip'
+Plug 'saadparwaiz1/cmp_luasnip'
+Plug 'ray-x/lsp_signature.nvim'
+
+" Color Scheme
+Plug 'sonph/onehalf', { 'rtp': 'vim/' }
 
 " End plug
 call plug#end()
@@ -122,6 +132,7 @@ set complete=w,b,u,U,t,i,d    " Do lots of scanning on tab completion
 set noerrorbells              " No error bells please
 set virtualedit=onemore
 set tags=./tags,tags;         " Find tags file
+set tabstop=4
 
 " Toggle relative numbering
 set relativenumber
@@ -183,9 +194,6 @@ nmap <LocalLeader>s *
 
 " Update buffer
 nnoremap <LocalLeader>r :checktime<CR>
-
-" Jump to current function declaration
-nmap <LocalLeader>d [m
 
 " Open location list
 nmap <LocalLeader>l :lopen<CR>
@@ -259,15 +267,11 @@ function! ExecuteMacroOverVisualRange()
   execute ":'<,'>normal @".nr2char(getchar())
 endfunction
 
-" Determine highlight group
-nmap <LocalLeader>h :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-  \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-  \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-" Easy Motion
+" Hop
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-map <LocalLeader> <Plug>(easymotion-prefix)
+nmap <LocalLeader>w :HopWord<CR>
+nmap <LocalLeader>b :HopWord<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " TComment
@@ -282,7 +286,6 @@ map <LocalLeader>c :TComment<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <C-p> :FZF -m<CR>
 nmap <LocalLeader>a :Rg<Space>
-nmap <LocalLeader>. :Tags<CR>
 
 " Use ripgrep for code searching
 command! -bang -nargs=* Rg call fzf#vim#grep('rg --hidden --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1, fzf#vim#with_preview('right:50%:hidden', '?'), <bang>0)
@@ -301,15 +304,13 @@ let g:fzf_layout = { 'down': '~30%' }
 let g:fzf_nvim_statusline = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-" NERDTree
+" nvim-tree
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-nnoremap <LocalLeader>m :NERDTreeToggle<CR>
-nnoremap <LocalLeader>f :NERDTreeFind<CR>
-let g:NERDTreeWinSize = 50
+" netrw needed for fugitive
+let g:nvim_tree_disable_netrw = 0
+let g:nvim_tree_disable_window_picker = 1
 
-let g:NERDTreeMapOpenVSplit='<C-v>'
-let g:NERDTreeMapOpenSplit='<C-s>'
+nnoremap <LocalLeader>f :NvimTreeFindFile<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Airline
@@ -317,25 +318,12 @@ let g:NERDTreeMapOpenSplit='<C-s>'
 let g:airline_theme = 'bubblegum'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#branch#empty_message = 'local'
-let g:airline#extensions#tmuxline#enabled = 0
 
 " Tabline configuration
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#show_tab_type = 0
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Tmuxline
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:tmuxline_theme = 'zenburn'
-let g:tmuxline_preset = 'nikhil'
-
-""""""""""""""""""""""""""""""""""""
-" QFEnter
-""""""""""""""""""""""""""""""""""""
-let g:qfenter_vopen_map = ['<C-v>']
-let g:qfenter_hopen_map = ['<C-s>']
 
 """"""""""""""""""""""""""""""""""""
 " Easy Align
@@ -358,28 +346,6 @@ xmap x <Plug>MoveMotionXPlug
 nmap dd <Plug>MoveMotionLinePlug
 
 """"""""""""""""""""""""""""""""""""
-" Neosnippets
-""""""""""""""""""""""""""""""""""""
-function! s:neosnippet_complete()
-  if pumvisible()
-    return "\<c-n>"
-  else
-    if neosnippet#expandable_or_jumpable()
-      return "\<Plug>(neosnippet_expand_or_jump)"
-    endif
-    return "\<tab>"
-  endif
-endfunction
-
-imap <C-k> <Plug>(neosnippet_expand_or_jump)
-smap <C-k> <Plug>(neosnippet_expand_or_jump)
-xmap <C-k> <Plug>(neosnippet_expand_target)
-imap <expr><TAB> <SID>neosnippet_complete()
-smap <expr><TAB> <SID>neosnippet_complete()
-xmap <expr><TAB> <SID>neosnippet_complete()
-imap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "<S-Tab>"
-
-""""""""""""""""""""""""""""""""""""
 " Auto Pairs
 """"""""""""""""""""""""""""""""""""
 let g:AutoPairsMultilineClose = 0
@@ -387,22 +353,16 @@ let g:AutoPairsMultilineClose = 0
 """"""""""""""""""""""""""""""""""""
 " Fugitive
 """"""""""""""""""""""""""""""""""""
-nmap <silent> <LocalLeader>gs :Gstatus<CR>gg<C-n>
-nmap <silent> <LocalLeader>gd :Gdiff<CR>
-nmap <silent> <LocalLeader>gc :Gcommit<CR>
-nmap <silent> <LocalLeader>gp :Gpush<CR>
-nmap <silent> <LocalLeader>gb :Gblame<CR>
-nmap <silent> <LocalLeader>gr :Gbrowse<CR>
-vmap <silent> <LocalLeader>gr :Gbrowse<CR>
+nmap <silent> <LocalLeader>gs :Git<CR>gg<C-n>
+nmap <silent> <LocalLeader>gd :Git diff<CR>
+nmap <silent> <LocalLeader>gb :Git blame<CR>
+nmap <silent> <LocalLeader>gr :GBrowse<CR>
+vmap <silent> <LocalLeader>gr :GBrowse<CR>
+
+" easy close
+autocmd FileType fugitive,fugitiveblame nmap <buffer> q gq
 
 let g:fugitive_github_domains = ['github.com']
-
-""""""""""""""""""""""""""""""""""""
-" GitGutter
-""""""""""""""""""""""""""""""""""""
-nmap <LocalLeader>hn <Plug>(GitGutterNextHunk)
-nmap <LocalLeader>hs <Plug>(GitGutterStageHunk)
-nmap <LocalLeader>hu <Plug>(GitGutterUndoHunk)
 
 """"""""""""""""""""""""""""""""""""
 " VimPasta
@@ -426,4 +386,28 @@ let g:clever_f_fix_key_direction = 1
 """"""""""""""""""""""""""""""""""""
 nmap <silent> <LocalLeader>x <Plug>(coc-definition)
 nmap <silent> <LocalLeader>v <Plug>(coc-format)
-nmap <LocalLeader>R :CocRestart<cr>
+nmap <silent> <LocalLeader>dn <Plug>(coc-diagnostic-next)
+nmap <silent> <LocalLeader>dp <Plug>(coc-diagnostic-prev)
+nmap <silent> <LocalLeader>dr <Plug>(coc-rename)
+nmap <silent> <LocalLeader>dR <Plug>(coc-references)
+nmap <silent> <LocalLeader>R :CocRestart<CR>
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+inoremap <silent><expr> <TAB>
+  \ pumvisible() ? "\<C-n>" :
+  \ <SID>check_back_space() ? "\<TAB>" :
+  \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" auto import for go
+nmap <silent> <LocalLeader>di :silent call CocAction('runCommand', 'editor.action.organizeImport')<CR>
+
+
+""""""""""""""""""""""""""""""""""""
+" Lua
+""""""""""""""""""""""""""""""""""""
+lua require('init')
