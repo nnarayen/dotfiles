@@ -6,20 +6,18 @@ call plug#begin('~/.config/nvim/bundle/')
 " Plugins
 Plug 'nvim-lua/plenary.nvim'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'bling/vim-airline'
+Plug 'nvim-lualine/lualine.nvim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'junegunn/vim-easy-align'
 Plug 'junegunn/vim-slash'
 Plug 'sickill/vim-pasta'
 Plug 'svermeulen/vim-easyclip'
-Plug 'tpope/vim-endwise'
-Plug 'jiangmiao/auto-pairs'
+Plug 'windwp/nvim-autopairs'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'wellle/targets.vim'
 Plug 'rhysd/clever-f.vim'
 Plug 'kyazdani42/nvim-web-devicons'
@@ -32,7 +30,6 @@ Plug 'cappyzawa/starlark.vim', { 'for': 'starlark' }
 
 " Post installation hooks
 Plug 'junegunn/fzf',      { 'dir': '~/.fzf', 'do': './install --all' }
-" Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
 " Command specific plugins
 Plug 'machakann/vim-swap',        { 'on': ['<Plug>(swap-prev)', '<Plug>(swap-next)'] }
@@ -105,6 +102,7 @@ autocmd BufNewFile,BufReadPre *.rb,*.rake setlocal textwidth=100
 
 " Adding new filetypes
 au BufNewFile,BufRead *.hql set filetype=hive.hql
+au BufNewFile,BufRead *.tf set filetype=hcl
 
 " Searching
 set incsearch                 " Incremental search
@@ -197,17 +195,6 @@ nnoremap <LocalLeader>r :checktime<CR>
 
 " Open location list
 nmap <LocalLeader>l :lopen<CR>
-
-" Directional terminal splits
-if has('nvim')
-  command! Vterm vsp | term
-  nnoremap <C-a>v :Vterm<CR>
-  command! Sterm 10sp | term
-  nnoremap <C-a>s :Sterm<CR>
-
-  autocmd TermOpen * tnoremap <buffer> jk <C-\><C-n>
-  tnoremap <C-h> <C-\><C-n><C-w>h
-endif
 
 " Intelligently jump over wrapped lines
 nnoremap <expr> j v:count ? 'j' : 'gj'
@@ -312,19 +299,6 @@ let g:nvim_tree_disable_window_picker = 1
 
 nnoremap <LocalLeader>f :NvimTreeFindFile<CR>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Airline
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:airline_theme = 'bubblegum'
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#branch#empty_message = 'local'
-
-" Tabline configuration
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#buffer_nr_show = 1
-let g:airline#extensions#tabline#fnamemod = ':t'
-let g:airline#extensions#tabline#show_tab_type = 0
-
 """"""""""""""""""""""""""""""""""""
 " Easy Align
 """"""""""""""""""""""""""""""""""""
@@ -344,11 +318,6 @@ let g:easy_align_delimiters['\'] = { 'pattern': '\\' }
 xmap d <Plug>MoveMotionXPlug
 xmap x <Plug>MoveMotionXPlug
 nmap dd <Plug>MoveMotionLinePlug
-
-""""""""""""""""""""""""""""""""""""
-" Auto Pairs
-""""""""""""""""""""""""""""""""""""
-let g:AutoPairsMultilineClose = 0
 
 """"""""""""""""""""""""""""""""""""
 " Fugitive
@@ -380,32 +349,6 @@ nmap gl <Plug>(swap-next)
 """"""""""""""""""""""""""""""""""""
 let g:clever_f_across_no_line = 1
 let g:clever_f_fix_key_direction = 1
-
-""""""""""""""""""""""""""""""""""""
-" Coc
-""""""""""""""""""""""""""""""""""""
-nmap <silent> <LocalLeader>x <Plug>(coc-definition)
-nmap <silent> <LocalLeader>v <Plug>(coc-format)
-nmap <silent> <LocalLeader>dn <Plug>(coc-diagnostic-next)
-nmap <silent> <LocalLeader>dp <Plug>(coc-diagnostic-prev)
-nmap <silent> <LocalLeader>dr <Plug>(coc-rename)
-nmap <silent> <LocalLeader>dR <Plug>(coc-references)
-nmap <silent> <LocalLeader>R :CocRestart<CR>
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-inoremap <silent><expr> <TAB>
-  \ pumvisible() ? "\<C-n>" :
-  \ <SID>check_back_space() ? "\<TAB>" :
-  \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-" auto import for go
-nmap <silent> <LocalLeader>di :silent call CocAction('runCommand', 'editor.action.organizeImport')<CR>
-
 
 """"""""""""""""""""""""""""""""""""
 " Lua
