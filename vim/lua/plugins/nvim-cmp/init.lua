@@ -1,13 +1,13 @@
 -- nvim-cmp setup
 local cmp = require('cmp')
 
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menu,menuone,preview'
---
 -- luasnip setup
 local luasnip = require('luasnip')
 
 cmp.setup {
+  completion = {
+    completeopt = 'menu,menuone',
+  },
   snippet = {
     expand = function(args)
       require('luasnip').lsp_expand(args.body)
@@ -38,8 +38,8 @@ cmp.setup {
   },
   sources = {
     { name = 'nvim_lsp' },
-    { name = 'luasnip' },
     { name = 'buffer' },
     { name = 'path' },
+    { name = 'luasnip' },
   },
 }

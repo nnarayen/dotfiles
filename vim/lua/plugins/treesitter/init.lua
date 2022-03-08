@@ -3,7 +3,8 @@ require('nvim-treesitter.configs').setup {
   ensure_installed = {
     "bash",
     "go",
-    "json"
+    "json",
+    "hcl",
   },
   highlight = {
     enable = true,
