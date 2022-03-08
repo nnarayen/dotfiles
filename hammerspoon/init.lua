@@ -24,10 +24,11 @@ mash = {"cmd", "shift"}
 local apps = {
   c = 'Google Chrome',
   s = 'Slack',
-  i = 'iTerm',
+  i = 'Alacritty',
   e = 'Messages',
   o = 'Notes',
-  d = 'IntelliJ IDEA'
+  d = 'IntelliJ IDEA',
+  z = 'zoom.us'
 }
 apps['1'] = '1Password 7'
 
@@ -45,7 +46,7 @@ hs.hotkey.bind(mash, "k", function() spoon.WinWin:moveAndResize("halfup") end)
 hs.hotkey.bind(mash, "j", function() spoon.WinWin:moveAndResize("halfdown") end)
 
 -- Maximize screen
-hs.hotkey.bind(mash, "m", function() spoon.WinWin:moveAndResize("fullscreen") end)
+hs.hotkey.bind(mash, "m", function() spoon.WinWin:moveAndResize("maximize") end)
 
 -- Multiple Monitor Actions
 hs.hotkey.bind(mash, "p", function()
@@ -60,17 +61,6 @@ spoon.ReloadConfiguration:start()
 hs.hotkey.bind(mash, "a", function()
   hs.hints.windowHints()
 end)
-
--- Turn bluetooth off/on system sleep
-bluetooth = require("hs._asm.undocumented.bluetooth")
-caffeinate_watcher = hs.caffeinate.watcher.new(function(state)
-  if state == hs.caffeinate.watcher.systemWillSleep then
-    bluetooth.power(false)
-  elseif state == hs.caffeinate.watcher.systemDidWake then
-    bluetooth.power(true)
-  end
-end)
-caffeinate_watcher:start()
 
 -- Loaded!
 hs.alert.show("Config loaded")
