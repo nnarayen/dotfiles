@@ -9,15 +9,10 @@ fi
 # Path configuration
 ###############################################################################
 export PATH=$PATH:/usr/bin
-export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:/bin
 export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
-export PATH=$PATH:/usr/local/git/bin
-export PATH=$PATH:/usr/texbin
-export PATH=$PATH:$HOME/.webtau
 export PATH=$PATH:$HOME/go/bin
-export PATH=/usr/local/opt/curl/bin:$PATH
 
 # Use homebrew python by default.
 export PATH=/usr/local/bin:$PATH
@@ -56,13 +51,11 @@ export EDITOR='nvim'
 # Ripgrep configuration
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
-# Only autocomplete local branches
-zstyle :completion::complete:git-checkout:argument-rest:headrefs command "git for-each-ref --format='%(refname)' refs/heads 2>/dev/null"
+# Git autocomplete
+zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+fpath=(~/.zsh $fpath)
 
-# Bintray setup
-if [ -f ~/.access/.zsh_bintray ]; then
-  source ~/.access/.zsh_bintray
-fi
+autoload -Uz compinit && compinit
 
 ###############################################################################
 # FZF
@@ -172,7 +165,6 @@ bindkey -M vicmd E edit-command-line
 ###############################################################################
 export ASDF_DIR="/usr/local/opt/asdf"
 source $ASDF_DIR/asdf.sh
-source $ASDF_DIR/etc/bash_completion.d/asdf.bash
 
 # Java setup
 alias sjh="source $HOME/.asdf/plugins/java/set-java-home.sh"
@@ -183,19 +175,21 @@ alias sjh="source $HOME/.asdf/plugins/java/set-java-home.sh"
 export PATH="/usr/local/opt/llvm/bin:$PATH"
 
 ###############################################################################
-# Virtualenv Wrapper
+# Google Cloud SDK
 ###############################################################################
-local python="$(asdf where python $(asdf current python))/bin"
-local virtualenv_script="$python/virtualenvwrapper.sh"
-if [ -f $virtualenv_lazy ]; then
-  export WORKON_HOME=$HOME/.virtualenvs
-  source $virtualenv_script
-fi
+source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
 ###############################################################################
-# IQPL
+# Chronosphere Setup
 ###############################################################################
-eval $(iqplup vars)
+if [ -f $HOME/.config/chronosphere/.zshrc ]; then
+  source $HOME/.config/chronosphere/.zshrc
+fi
+
+if [ -f $HOME/.config/chronosphere/.zsh_aliases ]; then
+  source $HOME/.config/chronosphere/.zsh_aliases
+fi
 
 ###############################################################################
 # Powerline10k
