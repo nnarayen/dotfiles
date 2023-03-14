@@ -1,11 +1,11 @@
--- import plugs settings
-require('plugins.nvim-tree')
-require('plugins.treesitter')
-require('plugins.hop')
-require('plugins.gitsigns')
-require('plugins.lsp')
-require('plugins.nvim-cmp')
-require('plugins.signature')
-require('plugins.luasnip')
-require('plugins.lualine')
-require('plugins.autopairs')
+-- import plugin settings
+return {
+  "junegunn/vim-slash",
+  "sickill/vim-pasta",
+  "tpope/vim-repeat",
+  "tpope/vim-surround",
+  "wellle/targets.vim",
+  "rhysd/clever-f.vim",
+  "tpope/vim-sleuth",
+  "machakann/vim-swap",
+}

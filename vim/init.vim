@@ -1,66 +1,10 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-" Vim-Plug
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-call plug#begin('~/.config/nvim/bundle/')
-
-" Plugins
-Plug 'nvim-lua/plenary.nvim'
-Plug 'lewis6991/gitsigns.nvim'
-Plug 'nvim-lualine/lualine.nvim'
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'junegunn/vim-easy-align'
-Plug 'junegunn/vim-slash'
-Plug 'sickill/vim-pasta'
-Plug 'svermeulen/vim-easyclip'
-Plug 'windwp/nvim-autopairs'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-rhubarb'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-surround'
-Plug 'wellle/targets.vim'
-Plug 'rhysd/clever-f.vim'
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'kyazdani42/nvim-tree.lua'
-Plug 'phaazon/hop.nvim'
-Plug 'junegunn/fzf.vim'
-
-" Lanugage specific plugins
-Plug 'cappyzawa/starlark.vim', { 'for': 'starlark' }
-
-" Post installation hooks
-Plug 'junegunn/fzf',      { 'dir': '~/.fzf', 'do': './install --all' }
-
-" Command specific plugins
-Plug 'machakann/vim-swap',        { 'on': ['<Plug>(swap-prev)', '<Plug>(swap-next)'] }
-Plug 'tomtom/tcomment_vim',       { 'on': ['TComment'] }
-
-Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate'}
-
-" LSP
-Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'L3MON4D3/LuaSnip'
-Plug 'saadparwaiz1/cmp_luasnip'
-Plug 'ray-x/lsp_signature.nvim'
-
-" Color Scheme
-Plug 'sonph/onehalf', { 'rtp': 'vim/' }
-
-" End plug
-call plug#end()
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " General Settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " Color settings
-set background=dark
-colorscheme onehalfdark
+set termguicolors
 
-" Local Leader
+ " Local Leader
 let maplocalleader=' '        " All my macros start with <Space>
 
 " Display
@@ -88,9 +32,7 @@ set fileformats=unix
 set ff=unix
 
 " Filetypes
-filetype on                   " Enable filetype
 set wildmenu                  " Menu has tab completion
-set laststatus=2
 set list listchars=tab:\ \ ,trail:·
 autocmd BufNewFile,BufRead * setlocal formatoptions+=t
 
@@ -134,7 +76,8 @@ set tabstop=4
 
 " Toggle relative numbering
 set relativenumber
-autocmd! InsertEnter,InsertLeave * set invrelativenumber
+autocmd InsertEnter * :set norelativenumber
+autocmd InsertLeave * :set relativenumber
 
 " Spelling
 if v:version >= 700
@@ -162,17 +105,8 @@ if index(g:kill_whitespace_blacklist, &ft) < 0
   au BufWritePre * :call <SID>StripTrailingWhitespaces()
 endif
 
-" Convert all tabs to spaces
-nmap <LocalLeader>T :retab<cr>
-
 " Close all quickfix windows
 autocmd FileType qf nnoremap <buffer> q :q<CR>
-
-" Unhighlight
-nnoremap <LocalLeader>q :nohlsearch<CR>
-
-" Sort lines
-vmap <LocalLeader>S :sort<CR>
 
 " Remove insert delay
 if !has('gui_running')
@@ -184,49 +118,11 @@ if !has('gui_running')
   augroup END
 endif
 
-" Exiting insert mode
-inoremap jk <Esc>
-
-" Search word under cursor
-nmap <LocalLeader>s *
-
-" Update buffer
-nnoremap <LocalLeader>r :checktime<CR>
-
 " Open location list
 nmap <LocalLeader>l :lopen<CR>
 
-" Intelligently jump over wrapped lines
-nnoremap <expr> j v:count ? 'j' : 'gj'
-nnoremap <expr> k v:count ? 'k' : 'gk'
-
-vnoremap <expr> j v:count ? 'j' : 'gj'
-vnoremap <expr> k v:count ? 'k' : 'gk'
-
-" :(
-cnoreabbrev W w
-cnoreabbrev Q q
-cnoreabbrev WQ wq
-cnoreabbrev Wq wq
-cnoreabbrev wQ wq
-
-" Avoid ex mode
-nnoremap Q <nop>
-
 " Reload files on focus
 au FocusGained * if &autoread | silent checktime | endif
-
-" Easily move to start/end of line
-nnoremap H ^
-vnoremap H ^
-onoremap H ^
-nnoremap L $
-vnoremap L $
-onoremap L $
-
-" Easier to run commands
-nnoremap ; :
-vnoremap ; :
 
 " Neovim workaround for C-h
 if has('nvim')
@@ -235,9 +131,6 @@ endif
 
 " Source vimrc
 nnoremap <LocalLeader>t :so ~/.config/nvim/init.vim<CR>
-
-" File switching
-nnoremap <LocalLeader><LocalLeader> <c-^>
 
 " Copy file path
 nnoremap <LocalLeader>u :let @+=expand('%')<CR>
@@ -255,30 +148,20 @@ function! ExecuteMacroOverVisualRange()
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-" Hop
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <LocalLeader>w :HopWord<CR>
-nmap <LocalLeader>b :HopWord<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
 " TComment
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:tcomment_mapleader1 = ''
 let g:tcomment_mapleader2 = ''
 let g:tcomment_mapleader_comment_anyway = ''
-map <LocalLeader>c :TComment<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " FZF
 """""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <C-p> :FZF -m<CR>
-nmap <LocalLeader>a :Rg<Space>
-
 " Use ripgrep for code searching
-command! -bang -nargs=* Rg call fzf#vim#grep('rg --hidden --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1, fzf#vim#with_preview('right:50%:hidden', '?'), <bang>0)
-
-" Search for word under cursor
-nmap S :Rg <C-R><C-W><CR>
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --hidden --line-number --no-heading --color=always --smart-case -- '.shellescape(<q-args>), 1,
+  \   fzf#vim#with_preview('right:50%:hidden', '?'), <bang>0)
 
 " Open windows in splits
 let g:fzf_action = {
@@ -290,46 +173,13 @@ let g:fzf_action = {
 let g:fzf_layout = { 'down': '~30%' }
 let g:fzf_nvim_statusline = 0
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" nvim-tree
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" netrw needed for fugitive
-let g:nvim_tree_disable_netrw = 0
-let g:nvim_tree_disable_window_picker = 1
-
-nnoremap <LocalLeader>f :NvimTreeFindFile<CR>
-
-""""""""""""""""""""""""""""""""""""
-" Easy Align
-""""""""""""""""""""""""""""""""""""
-vmap <LocalLeader>v <Plug>(EasyAlign)
-
-" Define custome configurations
-if !exists('g:easy_align_delimiters')
-  let g:easy_align_delimiters = {}
-endif
-let g:easy_align_delimiters['_'] = { 'pattern': '-', 'ignore_groups': ['String'] }
-let g:easy_align_delimiters[':'] = { 'pattern': ':' }
-let g:easy_align_delimiters['\'] = { 'pattern': '\\' }
-
-""""""""""""""""""""""""""""""""""""
-" Easy Clip
-""""""""""""""""""""""""""""""""""""
-xmap d <Plug>MoveMotionXPlug
-xmap x <Plug>MoveMotionXPlug
-nmap dd <Plug>MoveMotionLinePlug
-
 """"""""""""""""""""""""""""""""""""
 " Fugitive
 """"""""""""""""""""""""""""""""""""
-nmap <silent> <LocalLeader>gs :Git<CR>gg<C-n>
-nmap <silent> <LocalLeader>gd :Git diff<CR>
-nmap <silent> <LocalLeader>gb :Git blame<CR>
-nmap <silent> <LocalLeader>gr :GBrowse<CR>
-vmap <silent> <LocalLeader>gr :GBrowse<CR>
-
 " easy close
 autocmd FileType fugitive,fugitiveblame nmap <buffer> q gq
+autocmd FileType fugitive,fugitiveblame nmap <buffer> <C-n> )
+autocmd FileType fugitive,fugitiveblame nmap <buffer> <C-p> (
 
 let g:fugitive_github_domains = ['github.com']
 
@@ -338,11 +188,6 @@ let g:fugitive_github_domains = ['github.com']
 """"""""""""""""""""""""""""""""""""
 let g:pasta_disabled_filetypes = ["coffee", "markdown", "yaml", "slim", "nerdtree"]
 
-""""""""""""""""""""""""""""""""""""
-" Vim Swap
-""""""""""""""""""""""""""""""""""""
-nmap gh <Plug>(swap-prev)
-nmap gl <Plug>(swap-next)
 
 """"""""""""""""""""""""""""""""""""
 " Clever-F
