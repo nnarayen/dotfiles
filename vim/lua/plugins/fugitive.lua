@@ -1,11 +1,11 @@
 return {
   "tpope/vim-fugitive",
   keys = {
-    { "<LocalLeader>gs", "<cmd>Git<CR>gg<C-n>", desc = "Git status" },
+    { "<LocalLeader>gs", "<cmd>Git<CR>gg<C-n>", desc = "Git status", remap = true },
     { "<LocalLeader>gd", "<cmd>Git diff<CR>", desc = "Git diff" },
     { "<LocalLeader>gb", "<cmd>Git blame<CR>", desc = "Git blame" },
     { "<LocalLeader>gr", "<cmd>GBrowse<CR>", desc = "Git browse" },
-    { "<LocalLeader>gr", "<cmd>GBrowse<CR>", desc = "Git browse", mode = "v" },
+    { "<LocalLeader>gr", ":GBrowse<CR>", desc = "Git browse", mode = "v" },
   },
   config = function()
     vim.g.fugitive_github_domains = { 'github.com' }

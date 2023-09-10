@@ -1,7 +1,6 @@
 local map = vim.keymap.set
 local default_options = { silent = true }
 local expr_options = { expr = true, silent = true }
-local noremap_options = { noremap = true }
 
 -- Remap for dealing with visual line wraps
 map("n", "k", "v:count == 0 ? 'gk' : 'k'", expr_options)
@@ -17,13 +16,6 @@ map("n", "L", "$", default_options)
 map("v", "L", "$", default_options)
 map("o", "L", "$", default_options)
 
--- Typos command line
-map("c", "W", "w", noremap_options)
-map("c", "Q", "q", noremap_options)
-map("c", "WQ", "wq", noremap_options)
-map("c", "Wq", "wq", noremap_options)
-map("c", "wQ", "wq", noremap_options)
-
 -- Avoid ex mode
 map("n", "Q", "<nop>", default_options)
 
@@ -37,23 +29,46 @@ map("n", "<LocalLeader>s", "*", default_options)
 map("i", "jk", "<Esc>", default_options)
 
 -- Easier to run commands
-map("n", ";", ":", noremap_options)
-map("v", ";", ":", noremap_options)
+map("n", ";", ":")
+map("v", ";", ":")
 
 -- File switching
 map("n", "<LocalLeader><LocalLeader>", "<c-^>", default_options)
 
 -- Unhighlight text
-map("n", "<LocalLeader>q", ":nohlsearch<CR>")
+map("n", "<LocalLeader>q", ":nohlsearch<CR>", default_options)
 
 -- Update buffer
-map("n", "<LocalLeader>r", ":checktime<CR>")
+map("n", "<LocalLeader>r", ":checktime<CR>", default_options)
+
+-- Search for word under cursor
+map("n", "S", ":Rg <C-R><C-W><CR>", default_options)
+
+-- Copy relative/absolute file paths
+map("n", "<LocalLeader>u", ":let @+=expand('%')<CR>", default_options)
+map("n", "<LocalLeader>U", ":let @+=expand('%:p')<CR>", default_options)
+
+-- Command typos
+vim.cmd('cnoreabbrev W w')
+vim.cmd('cnoreabbrev Q q')
+vim.cmd('cnoreabbrev WQ wq')
+vim.cmd('cnoreabbrev Wq wq')
+vim.cmd('cnoreabbrev wQ wq')
+
+-- Extract command for go test
+function extract_filename()
+  local filename = vim.fn.getreg('+')
+  local directory = vim.fn.expand("%:p:.:h")
+  vim.fn.setreg("+", 'go test ./' .. directory .. ' vR ' .. filename)
+end
+
+map("n", "<LocalLeader>gT", extract_filename, default_options)
 
 -----------------------------------------------------
 -- FZF
 -----------------------------------------------------
 map("n", "<C-p>", ":FZF -m<CR>", default_options)
-map("n", "<LocalLeader>a", ":Rg<Space>", noremap_options)
+map("n", "<LocalLeader>a", ":Rg<Space>")
 
 -----------------------------------------------------
 -- Vim Swap

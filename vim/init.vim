@@ -121,38 +121,11 @@ endif
 " Open location list
 nmap <LocalLeader>l :lopen<CR>
 
-" Reload files on focus
-au FocusGained * if &autoread | silent checktime | endif
-
-" Neovim workaround for C-h
-if has('nvim')
-  nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
-endif
-
 " Source vimrc
 nnoremap <LocalLeader>t :so ~/.config/nvim/init.vim<CR>
 
-" Copy file path
-nnoremap <LocalLeader>u :let @+=expand('%')<CR>
-
 " Evenly size all splits
 nnoremap <silent> <C-q> <C-w>=
-
-" Run a macro on all visually selected lines
-" https://medium.com/@schtoeffel/you-don-t-need-more-than-one-cursor-in-vim-2c44117d51db#.3dcn9prw6
-xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
-
-function! ExecuteMacroOverVisualRange()
-  echo "@".getcmdline()
-  execute ":'<,'>normal @".nr2char(getchar())
-endfunction
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" TComment
-"""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:tcomment_mapleader1 = ''
-let g:tcomment_mapleader2 = ''
-let g:tcomment_mapleader_comment_anyway = ''
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 " FZF
@@ -197,5 +170,5 @@ let g:clever_f_fix_key_direction = 1
 
 """"""""""""""""""""""""""""""""""""
 " Lua
-""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""
 lua require('init')

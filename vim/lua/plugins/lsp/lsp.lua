@@ -1,21 +1,20 @@
 local nvim_lsp = require('lspconfig')
 local cmp_nvim_lsp = require('cmp_nvim_lsp')
 
--- Function to organize go imports
+-- Function to organize imports
 function organize_imports(wait_ms)
-  local params = vim.lsp.util.make_range_params()
-  params.context = {only = {"source.organizeImports"}}
-  local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, wait_ms)
-  for _, res in pairs(result or {}) do
-    for _, r in pairs(res.result or {}) do
-      if r.edit then
-        vim.lsp.util.apply_workspace_edit(r.edit, "utf-16")
-      else
-        vim.lsp.buf.execute_command(r.command)
-      end
-    end
-  end
+  vim.lsp.buf.code_action({
+    context = {
+      only = {
+        "source.organizeImports",
+        -- typescript distinguishes between organize and add
+        "source.addMissingImports",
+      }
+    },
+    apply = true,
+  })
 end
+
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -38,5 +37,11 @@ local capabilities = require('cmp_nvim_lsp').default_capabilities()
 nvim_lsp.gopls.setup {
   on_attach = on_attach,
   -- Add additional capabilities supported by nvim-cmp
-  capabilities = capabilities
+  capabilities = capabilities,
+}
+
+nvim_lsp.tsserver.setup {
+  on_attach = on_attach,
+  -- Add additional capabilities supported by nvim-cmp
+  capabilities = capabilities,
 }

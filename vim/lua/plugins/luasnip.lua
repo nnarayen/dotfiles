@@ -23,6 +23,26 @@ function M.config()
       ls.jump(-1)
     end
   end, { silent = true })
+
+  -- convenience variables
+  local s = ls.snippet
+  local t = ls.text_node
+
+  ls.add_snippets("go", {
+    s("erP", t("errors.Propagate(err)")),
+    s("tdT", {
+      t({
+        "for _, tt := range []struct {",
+        "\tname string",
+        "}{",
+        "\t{},",
+        "} {",
+        "\tt.Run(tt.name, func(t *testing.T) {",
+        "\t})",
+        "}",
+      }),
+    }),
+  })
 end
 
 return M
