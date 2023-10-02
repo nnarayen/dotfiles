@@ -22,7 +22,7 @@ mash = {"cmd", "shift"}
 
 -- Apps
 local apps = {
-  c = 'Google Chrome',
+  c = 'Arc',
   s = 'Slack',
   i = 'Alacritty',
   e = 'Messages',
@@ -53,6 +53,19 @@ hs.hotkey.bind(mash, "p", function()
   local win = hs.window.focusedWindow()
   win:moveToScreen(win:screen():previous())
 end)
+
+-- Switch between keyboard layouts
+function toggleKeyboardLayout()
+  local layout = hs.keycodes.currentLayout()
+  if layout == "U.S." then
+    hs.keycodes.setLayout("Colemak DH Matrix")
+  else
+    hs.keycodes.setLayout("U.S.")
+  end
+  hs.reload()
+end
+
+hs.hotkey.bind(mash, "b", toggleKeyboardLayout)
 
 -- Reload config
 spoon.ReloadConfiguration:start()
