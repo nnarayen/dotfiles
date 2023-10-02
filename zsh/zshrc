@@ -13,9 +13,13 @@ export PATH=$PATH:/bin
 export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
 export PATH=$PATH:$HOME/go/bin
+export PATH=$PATH:/opt/homebrew/bin
 
-# Use homebrew python by default.
-export PATH=/usr/local/bin:$PATH
+# Use asdf tools
+export PATH=$PATH:$HOME/.asdf
+
+# Postgres setup
+export PATH=$PATH:/opt/homebrew/opt/postgresql@15/bin
 
 # Use legacy HISTFILE for command search
 export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"
@@ -51,11 +55,14 @@ export EDITOR='nvim'
 # Ripgrep configuration
 export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
-# Git autocomplete
-zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
-fpath=(~/.zsh $fpath)
+# Brew autocomplete
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 
-autoload -Uz compinit && compinit
+  autoload -Uz compinit
+  compinit
+fi
 
 ###############################################################################
 # FZF
@@ -64,31 +71,10 @@ if [[ -f ~/.fzf.zsh ]]; then
   source ~/.fzf.zsh
 
   # FZF options
-  export FZF_DEFAULT_COMMAND='rg --files --no-ignore-vcs --hidden --glob "!.git/*"'
+  export FZF_DEFAULT_COMMAND="fd --type file --hidden --strip-cwd-prefix"
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_CTRL_R_OPTS='--sort'
-
-  # cdf - cd into the directory of the selected file
-  cdf() {
-    local file
-    local dir
-    file=$(fzf +m -q "$1") && dir=$(dirname "$file") && cd "$dir"
-  }
 fi
-
-# cw - Switch tmux window
-cw() {
-  local current_window target target_window
-  windows=$(tmux list-windows -F '#I|#{window_name}')
-  current_window=$(tmux display-message -p '#I')
-
-  target=$(echo "$windows" | grep -v "$current_window" | fzf +m --reverse) || return
-  target_window=$(echo $target | awk 'BEGIN{FS="\\|"} {print$1}')
-
-  if [[ $current_window -ne $target_window ]]; then
-    tmux select-window -t $target_window
-  fi
-}
 
 ###############################################################################
 # FASD
@@ -163,22 +149,8 @@ bindkey -M vicmd E edit-command-line
 ###############################################################################
 # asdf
 ###############################################################################
-export ASDF_DIR="/usr/local/opt/asdf"
+export ASDF_DIR="/opt/homebrew/opt/asdf/libexec"
 source $ASDF_DIR/asdf.sh
-
-# Java setup
-alias sjh="source $HOME/.asdf/plugins/java/set-java-home.sh"
-
-###############################################################################
-# Clang
-###############################################################################
-export PATH="/usr/local/opt/llvm/bin:$PATH"
-
-###############################################################################
-# Google Cloud SDK
-###############################################################################
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
 ###############################################################################
 # Chronosphere Setup
