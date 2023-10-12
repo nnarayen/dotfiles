@@ -27,17 +27,15 @@ local apps = {
   i = 'Alacritty',
   e = 'Messages',
   o = 'Notes',
-  d = 'IntelliJ IDEA',
   z = 'zoom.us'
 }
-apps['1'] = '1Password 7'
 
 for key, app in pairs(apps) do
   hs.hotkey.bind(mash, key, function() hs.application.launchOrFocus(app) end)
 end
 
 -- Put mac to sleep
-hs.hotkey.bind(mash, "space", function() hs.caffeinate.systemSleep() end)
+hs.hotkey.bind(mash, "space", function() hs.caffeinate.lockScreen() end)
 
 -- Move window to left/right/top/bottom half of the screen
 hs.hotkey.bind(mash, "h", function() spoon.WinWin:moveAndResize("halfleft") end)
@@ -54,19 +52,6 @@ hs.hotkey.bind(mash, "p", function()
   win:moveToScreen(win:screen():previous())
 end)
 
--- Switch between keyboard layouts
-function toggleKeyboardLayout()
-  local layout = hs.keycodes.currentLayout()
-  if layout == "U.S." then
-    hs.keycodes.setLayout("Colemak DH Matrix")
-  else
-    hs.keycodes.setLayout("U.S.")
-  end
-  hs.reload()
-end
-
-hs.hotkey.bind(mash, "b", toggleKeyboardLayout)
-
 -- Reload config
 spoon.ReloadConfiguration:start()
 
@@ -74,6 +59,16 @@ spoon.ReloadConfiguration:start()
 hs.hotkey.bind(mash, "a", function()
   hs.hints.windowHints()
 end)
+
+-- Toggle bluetooth on system lock
+caffeinate_watcher = hs.caffeinate.watcher.new(function(state)
+  if state == hs.caffeinate.watcher.screensDidLock then
+    hs.execute("/opt/homebrew/bin/blueutil -p 0")
+  elseif state == hs.caffeinate.watcher.screensDidUnlock then
+    hs.execute("/opt/homebrew/bin/blueutil -p 1")
+  end
+end)
+caffeinate_watcher:start()
 
 -- Loaded!
 hs.alert.show("Config loaded")
