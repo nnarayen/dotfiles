@@ -49,17 +49,17 @@ map("n", "<LocalLeader>u", ":let @+=expand('%')<CR>", default_options)
 map("n", "<LocalLeader>U", ":let @+=expand('%:p')<CR>", default_options)
 
 -- Command typos
-vim.cmd('cnoreabbrev W w')
-vim.cmd('cnoreabbrev Q q')
-vim.cmd('cnoreabbrev WQ wq')
-vim.cmd('cnoreabbrev Wq wq')
-vim.cmd('cnoreabbrev wQ wq')
+vim.cmd("cnoreabbrev W w")
+vim.cmd("cnoreabbrev Q q")
+vim.cmd("cnoreabbrev WQ wq")
+vim.cmd("cnoreabbrev Wq wq")
+vim.cmd("cnoreabbrev wQ wq")
 
 -- Extract command for go test
 function extract_filename()
-  local filename = vim.fn.getreg('+')
+  local filename = vim.fn.getreg("+")
   local directory = vim.fn.expand("%:p:.:h")
-  vim.fn.setreg("+", 'go test ./' .. directory .. ' vR ' .. filename)
+  vim.fn.setreg("+", "go test ./" .. directory .. " vR " .. filename)
 end
 
 map("n", "<LocalLeader>gT", extract_filename, default_options)

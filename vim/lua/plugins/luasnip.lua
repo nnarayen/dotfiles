@@ -24,6 +24,9 @@ function M.config()
     end
   end, { silent = true })
 
+  -- load all snippets
+  require("luasnip.loaders.from_vscode").lazy_load({ paths = "~/.config/nvim/snippets" })
+
   -- convenience variables
   local s = ls.snippet
   local t = ls.text_node

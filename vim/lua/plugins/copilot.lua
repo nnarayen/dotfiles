@@ -7,7 +7,7 @@ function M.init()
 end
 
 function M.config()
-  vim.api.nvim_set_keymap('i', '<C-l>', 'copilot#Accept("")', { expr=true, silent=true })
+  vim.api.nvim_set_keymap("i", "<C-l>", 'copilot#Accept("")', { expr = true, silent = true })
 end
 
 return M

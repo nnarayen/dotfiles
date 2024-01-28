@@ -8,7 +8,7 @@ return {
     { "<LocalLeader>gr", ":GBrowse<CR>", desc = "Git browse", mode = "v" },
   },
   config = function()
-    vim.g.fugitive_github_domains = { 'github.com' }
+    vim.g.fugitive_github_domains = { "github.com" }
   end,
   dependencies = {
     "tpope/vim-rhubarb",

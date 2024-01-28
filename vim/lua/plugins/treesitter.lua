@@ -12,6 +12,8 @@ function M.config()
       "json",
       "lua",
       "vim",
+      "typescript",
+      "tsx",
     },
     highlight = {
       enable = true,
@@ -27,6 +29,9 @@ function M.config()
       end,
     },
     indent = {
+      enable = true,
+    },
+    matchup = {
       enable = true,
     },
   })
