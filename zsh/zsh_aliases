@@ -32,6 +32,7 @@ alias tma="tmux attach -t"
 
 # Git
 alias gp="git pull"
+alias gpu="git push"
 alias gpf="git push -f"
 alias gbd="git branch -D"
 alias gs="git status"
@@ -39,13 +40,11 @@ alias gcl="git checkout -"
 alias gca="git commit --amend --no-edit"
 alias gcaa="git commit --amend --no-edit -a"
 alias gd="git diff"
-alias gcm="git checkout master"
-alias gcd="git checkout develop"
+alias gcm="git checkout main"
 alias gdo="git diff origin/master"
-alias grm="git rebase master"
-alias grd="git rebase develop"
+alias grm="git rebase main"
 alias grc="git rebase --continue"
-alias gb="git branch"
+alias gb="git branch --sort=-committerdate | head -n 10 | fzf | xargs -r git checkout"
 alias gco="git checkout"
 alias gsp="git stash pop"
 alias gcb="git checkout -b"
@@ -66,19 +65,8 @@ gcr() {
   git pull-request -b master -m "release/$1" -m "https://github.com/tsiq/product-platform/releases/tag/$1"
 }
 
-# Bazelisk
-alias bazel="bazelisk"
-
-# Maven
-alias mvci="mvn clean install"
-alias mvi="mvn install"
-
-# Virtualenv
-alias dv="deactivate"
-
 # ZSH specific aliases
 if [ -n "$ZSH_VERSION" ]; then
-  alias -g sT="-DskipTests"
   alias -g cJ='-H "Content-type: application/json"'
   alias -g cM='-H "Content-type: multipart/form-data"'
   alias -g cO='-H "Content-type: application/octet-stream"'
@@ -91,8 +79,3 @@ fi
 
 # Docker
 alias dsa="docker stop \$(docker ps -q)"
-
-# Authorization aliases
-if [ -f ~/.access/.zsh_okta_aliases ]; then
-  source ~/.access/.zsh_okta_aliases
-fi
