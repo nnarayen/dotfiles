@@ -12,14 +12,13 @@ export PATH=$PATH:/usr/bin
 export PATH=$PATH:/bin
 export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
-export PATH=$PATH:$HOME/go/bin
 export PATH=$PATH:/opt/homebrew/bin
 
 # Use asdf tools
 export PATH=$PATH:$HOME/.asdf
 
 # Postgres setup
-export PATH=$PATH:/opt/homebrew/opt/postgresql@15/bin
+export PATH=$PATH:/opt/homebrew/opt/postgresql@14/bin
 
 # Use legacy HISTFILE for command search
 export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"
@@ -75,25 +74,6 @@ if [[ -f ~/.fzf.zsh ]]; then
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_CTRL_R_OPTS='--sort'
 fi
-
-###############################################################################
-# FASD
-###############################################################################
-eval "$(fasd --init zsh-hook)"
-
-# More lenient fuzzy matching
-_FASD_FUZZY=8
-
-fasd_cd() {
-  if [ $# -le 1 ]; then
-    fasd "$@"
-  else
-    local _fasd_ret="$(fasd -e echo "$@")"
-    [ -z "$_fasd_ret" ] && return
-    [ -d "$_fasd_ret" ] && cd "$_fasd_ret" || echo "$_fasd_ret"
-  fi
-}
-alias z="fasd_cd -d"
 
 ###############################################################################
 # Vi Mode
@@ -153,17 +133,9 @@ export ASDF_DIR="/opt/homebrew/opt/asdf/libexec"
 source $ASDF_DIR/asdf.sh
 
 ###############################################################################
-# Chronosphere Setup
+# zoxide
 ###############################################################################
-if [ -f $HOME/.config/chronosphere/.zshrc ]; then
-  source $HOME/.config/chronosphere/.zshrc
-fi
+eval "$(zoxide init zsh)"
 
-if [ -f $HOME/.config/chronosphere/.zsh_aliases ]; then
-  source $HOME/.config/chronosphere/.zsh_aliases
-fi
-
-###############################################################################
-# Powerline10k
-###############################################################################
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
