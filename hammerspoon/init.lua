@@ -6,6 +6,7 @@ if not hspoon_list then
   hspoon_list = {
     "WinWin",
     "ReloadConfiguration",
+    "TextClipboardHistory",
   }
 end
 
@@ -27,7 +28,8 @@ local apps = {
   i = 'Alacritty',
   e = 'Messages',
   o = 'Notes',
-  z = 'zoom.us'
+  z = 'zoom.us',
+  d = 'Postico 2',
 }
 
 for key, app in pairs(apps) do
