@@ -7,18 +7,12 @@ function M.config()
 
   null_ls.setup({
     sources = {
-      null_ls.builtins.formatting.stylua,
-      null_ls.builtins.formatting.prettier,
+      null_ls.builtins.formatting.black,
     },
   })
 
-  -- Keybinding to format, but disable tsserver
   vim.keymap.set("n", "<LocalLeader>v", function()
-    vim.lsp.buf.format({
-      filter = function(client)
-        return client.name ~= "tsserver"
-      end,
-    })
+    vim.lsp.buf.format()
   end, {})
 end
 

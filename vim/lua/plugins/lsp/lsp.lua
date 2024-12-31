@@ -6,9 +6,6 @@ function organize_imports(wait_ms)
   vim.lsp.buf.code_action({
     context = {
       only = {
-        -- gopls requires organizeImports
-        -- "source.organizeImports",
-        -- typescript distinguishes between organize and add
         "source.addMissingImports",
       },
     },
@@ -52,19 +49,22 @@ local on_attach = function(client, bufnr)
 end
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
-nvim_lsp.gopls.setup({
+nvim_lsp.lua_ls.setup({
   on_attach = on_attach,
   -- Add additional capabilities supported by nvim-cmp
   capabilities = capabilities,
+  settings = {
+    Lua = {
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = { "vim" },
+      },
+    }
+  }
 })
 
-nvim_lsp.tsserver.setup({
+nvim_lsp.pyright.setup({
   on_attach = on_attach,
   -- Add additional capabilities supported by nvim-cmp
   capabilities = capabilities,
-  init_options = {
-    preferences = {
-      importModuleSpecifierPreference = "relative",
-    },
-  },
 })

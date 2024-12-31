@@ -9,7 +9,7 @@ function M.config()
   })
 
   vim.keymap.set("n", "<LocalLeader>T", function()
-    require("trouble").toggle()
+    require("trouble").toggle('diagnostics')
   end)
 end
 

@@ -1,4 +1,3 @@
--- import plugin settings
 return {
   "junegunn/vim-slash",
   "sickill/vim-pasta",
@@ -7,5 +6,4 @@ return {
   "rhysd/clever-f.vim",
   "tpope/vim-sleuth",
   "machakann/vim-swap",
-  "andymass/vim-matchup",
 }

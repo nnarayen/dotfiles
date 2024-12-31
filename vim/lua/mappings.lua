@@ -26,7 +26,7 @@ map("v", "<LocalLeader>S", ":sort<CR>", default_options)
 map("n", "<LocalLeader>s", "*", default_options)
 
 -- Easy exit insert mode
-map("i", "jk", "<Esc>", default_options)
+-- map("i", "jk", "<Esc>", default_options)
 
 -- Easier to run commands
 map("n", ";", ":")
@@ -67,7 +67,7 @@ map("n", "<LocalLeader>gT", extract_filename, default_options)
 -----------------------------------------------------
 -- FZF
 -----------------------------------------------------
-map("n", "<C-p>", ":FZF -m<CR>", default_options)
+-- map("n", "<C-p>", ":FZF -m<CR>", default_options)
 map("n", "<LocalLeader>a", ":Rg<Space>")
 
 -----------------------------------------------------

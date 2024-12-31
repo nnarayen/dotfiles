@@ -1,0 +1,41 @@
+format = """
+[](bg:shell_bg fg:shell_bg)\
+$shell\
+[](fg:shell_bg bg:user_bg)\
+$directory\
+[](fg:user_bg)\
+$character\
+"""
+
+palette = 'main'
+add_newline = false
+
+[palettes.main]
+red = "#bf616a"
+green = "#a3be8c"
+purple = "#b48ead"
+yellow = "#ebcb8b"
+shell_bg = '#303030'
+shell_fg = '#808080'
+os_bg = "#7e8188"
+os_fg = "#232831"
+dir_bg = "#a3be8c"
+dir_fg = "#2e3440"
+git_bg = "#ebcb8b"
+git_fg = "#39404f"
+user_bg = "#81a1c1"
+user_fg = "#2b303b"
+
+[shell]
+format = '[  $indicator ](fg:shell_fg bg:shell_bg)'
+disabled = false
+
+[directory]
+format = '[ $path ](fg:user_bg bg:user_fg italic)'
+truncation_length = 2
+truncation_symbol = '../'
+
+[character]
+success_symbol = ''
+error_symbol = ''
+vimcmd_symbol = '[ ](bg:purple fg:user_fg bold)'
