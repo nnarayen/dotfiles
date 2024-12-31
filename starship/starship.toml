@@ -1,10 +1,10 @@
 format = """
-[](bg:shell_bg fg:shell_bg)\
 $shell\
-[](fg:shell_bg bg:user_bg)\
-$directory\
-[](fg:user_bg)\
 $character\
+$directory\
+[](fg:directory_bg bg:git_bg)\
+$git_branch\
+[ ](fg:git_bg)\
 """
 
 palette = 'main'
@@ -19,23 +19,29 @@ shell_bg = '#303030'
 shell_fg = '#808080'
 os_bg = "#7e8188"
 os_fg = "#232831"
-dir_bg = "#a3be8c"
+ins_bg = "#a3be8c"
 dir_fg = "#2e3440"
 git_bg = "#ebcb8b"
 git_fg = "#39404f"
-user_bg = "#81a1c1"
-user_fg = "#2b303b"
+directory_bg = "#81a1c1"
+directory_fg = "#2b303b"
 
 [shell]
-format = '[  $indicator ](fg:shell_fg bg:shell_bg)'
+format = '[   $indicator ](fg:shell_fg bg:shell_bg)'
 disabled = false
 
 [directory]
-format = '[ $path ](fg:user_bg bg:user_fg italic)'
-truncation_length = 2
+format = '[ $path ](fg:directory_fg bg:directory_bg italic)'
+truncation_length = 4
 truncation_symbol = '../'
 
 [character]
-success_symbol = ''
-error_symbol = ''
-vimcmd_symbol = '[ ](bg:purple fg:user_fg bold)'
+format = '$symbol'
+
+# Same prompt for both success / error, different colors for CMD mode
+success_symbol = '[](fg:shell_bg bg:ins_bg)[INS](bg:ins_bg fg:dir_fg)[](fg:ins_bg bg:directory_bg)'
+error_symbol = '[](fg:shell_bg bg:ins_bg)[INS](bg:ins_bg fg:dir_fg)[](fg:ins_bg bg:directory_bg)'
+vimcmd_symbol = '[](fg:shell_bg bg:purple)[VIS](bg:purple fg:dir_fg)[](fg:purple bg:directory_bg)'
+
+[git_branch]
+format = '[ $branch ](bg:git_bg fg:git_fg)'
