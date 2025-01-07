@@ -1,10 +1,3 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 ###############################################################################
 # Path configuration
 ###############################################################################
@@ -12,13 +5,11 @@ export PATH=$PATH:/usr/bin
 export PATH=$PATH:/bin
 export PATH=$PATH:/usr/sbin
 export PATH=$PATH:/sbin
+export PATH=$PATH:$HOME/go/bin
 export PATH=$PATH:/opt/homebrew/bin
 
 # Use asdf tools
 export PATH=$PATH:$HOME/.asdf
-
-# Postgres setup
-export PATH=$PATH:/opt/homebrew/opt/postgresql@14/bin
 
 # Use legacy HISTFILE for command search
 export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"
@@ -66,8 +57,8 @@ fi
 ###############################################################################
 # FZF
 ###############################################################################
-if [[ -f ~/.fzf.zsh ]]; then
-  source ~/.fzf.zsh
+if which fzf > /dev/null 2>&1; then
+  source <(fzf --zsh)
 
   # FZF options
   export FZF_DEFAULT_COMMAND="fd --type file --hidden --strip-cwd-prefix"
@@ -130,12 +121,23 @@ bindkey -M vicmd E edit-command-line
 # asdf
 ###############################################################################
 export ASDF_DIR="/opt/homebrew/opt/asdf/libexec"
-source $ASDF_DIR/asdf.sh
+if [[ -s "$ASDF_DIR/asdf.sh" ]]; then
+  source "$ASDF_DIR/asdf.sh"
+fi
 
 ###############################################################################
 # zoxide
 ###############################################################################
 eval "$(zoxide init zsh)"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+###############################################################################
+# Starship
+###############################################################################
+
+# Account for multiple source bug, https://github.com/starship/starship/issues/3418#issuecomment-2477375663
+if [[ "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select" || \
+      "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select-wrapped" ]]; then
+    zle -N zle-keymap-select "";
+fi
+
+eval "$(starship init zsh)"
