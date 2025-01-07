@@ -22,7 +22,6 @@ local on_attach = function(client, bufnr)
 
   vim.keymap.set("n", "<LocalLeader>x", vim.lsp.buf.definition, opts)
   vim.keymap.set("n", "<LocalLeader>dr", vim.lsp.buf.rename, opts)
-  vim.keymap.set("n", "<LocalLeader>dR", vim.lsp.buf.references, opts)
   vim.keymap.set("n", "<LocalLeader>do", vim.diagnostic.open_float, opts)
   vim.keymap.set("n", "<LocalLeader>k", vim.lsp.buf.hover, opts)
   vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
@@ -57,14 +56,23 @@ nvim_lsp.lua_ls.setup({
     Lua = {
       diagnostics = {
         -- Get the language server to recognize the `vim` global
-        globals = { "vim" },
+        globals = { "vim", "hs", "spoon" },
       },
     }
   }
 })
 
-nvim_lsp.pyright.setup({
+-- nvim_lsp.basedpyright.setup({
+--   on_attach = on_attach,
+--   -- Add additional capabilities supported by nvim-cmp
+--   capabilities = capabilities,
+--   settings = {
+--     basedpyright = {
+--       disableOrganizeImports = true, -- use Ruff
+--     },
+--   },
+-- })
+
+nvim_lsp.ruff.setup({
   on_attach = on_attach,
-  -- Add additional capabilities supported by nvim-cmp
-  capabilities = capabilities,
 })

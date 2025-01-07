@@ -25,9 +25,6 @@ map("v", "<LocalLeader>S", ":sort<CR>", default_options)
 -- Search word under cursor
 map("n", "<LocalLeader>s", "*", default_options)
 
--- Easy exit insert mode
--- map("i", "jk", "<Esc>", default_options)
-
 -- Easier to run commands
 map("n", ";", ":")
 map("v", ";", ":")
@@ -42,7 +39,7 @@ map("n", "<LocalLeader>q", ":nohlsearch<CR>", default_options)
 map("n", "<LocalLeader>r", ":checktime<CR>", default_options)
 
 -- Search for word under cursor
-map("n", "S", ":Rg <C-R><C-W><CR>", default_options)
+-- map("n", "S", ":Rg <C-R><C-W><CR>", default_options)
 
 -- Copy relative/absolute file paths
 map("n", "<LocalLeader>u", ":let @+=expand('%')<CR>", default_options)
@@ -54,21 +51,6 @@ vim.cmd("cnoreabbrev Q q")
 vim.cmd("cnoreabbrev WQ wq")
 vim.cmd("cnoreabbrev Wq wq")
 vim.cmd("cnoreabbrev wQ wq")
-
--- Extract command for go test
-function extract_filename()
-  local filename = vim.fn.getreg("+")
-  local directory = vim.fn.expand("%:p:.:h")
-  vim.fn.setreg("+", "go test ./" .. directory .. " vR " .. filename)
-end
-
-map("n", "<LocalLeader>gT", extract_filename, default_options)
-
------------------------------------------------------
--- FZF
------------------------------------------------------
--- map("n", "<C-p>", ":FZF -m<CR>", default_options)
-map("n", "<LocalLeader>a", ":Rg<Space>")
 
 -----------------------------------------------------
 -- Vim Swap
