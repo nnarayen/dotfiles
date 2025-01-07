@@ -7,12 +7,14 @@ function M.config()
 
   null_ls.setup({
     sources = {
-      -- null_ls.builtins.formatting.black,
+      null_ls.builtins.formatting.black,
+      null_ls.builtins.formatting.isort,
     },
   })
 
   vim.keymap.set("n", "<LocalLeader>v", function()
-    vim.lsp.buf.format()
+    -- Python formatters are slow
+    vim.lsp.buf.format({ timeout_ms = 3000 })
   end, {})
 end
 

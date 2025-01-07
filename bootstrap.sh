@@ -5,7 +5,7 @@ sudo apt install -y openssh-server
 sudo service ssh start
 
 # Install dependencies
-brew install neovim ripgrep fzf bat fd zoxide starship
+brew install neovim ripgrep fzf bat fd zoxide starship hub
 
 # Configure nvim
 pushd $(dirname $0)

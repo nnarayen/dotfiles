@@ -62,16 +62,18 @@ nvim_lsp.lua_ls.setup({
   }
 })
 
--- nvim_lsp.basedpyright.setup({
---   on_attach = on_attach,
---   -- Add additional capabilities supported by nvim-cmp
---   capabilities = capabilities,
---   settings = {
---     basedpyright = {
---       disableOrganizeImports = true, -- use Ruff
---     },
---   },
--- })
+nvim_lsp.basedpyright.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    basedpyright = {
+      disableOrganizeImports = true, -- use isort
+      analysis = {
+        typeCheckingMode = "off"
+      }
+    },
+  },
+})
 
 nvim_lsp.ruff.setup({
   on_attach = on_attach,
