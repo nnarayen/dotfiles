@@ -75,6 +75,13 @@ nvim_lsp.basedpyright.setup({
   },
 })
 
-nvim_lsp.ruff.setup({
+nvim_lsp.ts_ls.setup({
   on_attach = on_attach,
+  -- Add additional capabilities supported by nvim-cmp
+  capabilities = capabilities,
+  init_options = {
+    preferences = {
+      importModuleSpecifierPreference = "relative",
+    },
+  },
 })
