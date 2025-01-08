@@ -27,7 +27,7 @@ set sidescrolloff=5           " Keep at least 5 lines left/right
 set scrolloff=5               " Keep at least 5 lines above/below
 
 " Clipboard
-set clipboard=unnamed
+set clipboard^=unnamed,unnamedplus
 set fileformats=unix
 set ff=unix
 
