@@ -1,5 +1,7 @@
 format = """
 $shell\
+[](fg:shell_bg bg:username_bg)\
+$username\
 $character\
 $directory\
 [](fg:directory_bg bg:git_bg)\
@@ -25,13 +27,19 @@ git_bg = "#ebcb8b"
 git_fg = "#39404f"
 directory_bg = "#81a1c1"
 directory_fg = "#2b303b"
+username_bg = "#ffb3b3"
+username_fg = "#2e3440"
 
 [shell]
 format = '[   $indicator ](fg:shell_fg bg:shell_bg)'
 disabled = false
 
+[username]
+show_always = true
+format = '[ $user ](bg:username_bg fg:username_fg)'
+
 [directory]
-format = '[ $path ](fg:directory_fg bg:directory_bg italic)'
+format = '[ $path ](fg:directory_fg bg:directory_bg)'
 truncation_length = 4
 truncation_symbol = '../'
 
@@ -39,9 +47,9 @@ truncation_symbol = '../'
 format = '$symbol'
 
 # Same prompt for both success / error, different colors for CMD mode
-success_symbol = '[](fg:shell_bg bg:ins_bg)[INS](bg:ins_bg fg:dir_fg)[](fg:ins_bg bg:directory_bg)'
-error_symbol = '[](fg:shell_bg bg:ins_bg)[INS](bg:ins_bg fg:dir_fg)[](fg:ins_bg bg:directory_bg)'
-vimcmd_symbol = '[](fg:shell_bg bg:purple)[VIS](bg:purple fg:dir_fg)[](fg:purple bg:directory_bg)'
+success_symbol = '[](fg:username_bg bg:ins_bg)[INS](bg:ins_bg fg:dir_fg)[](fg:ins_bg bg:directory_bg)'
+error_symbol = '[](fg:username_bg bg:ins_bg)[INS](bg:ins_bg fg:dir_fg)[](fg:ins_bg bg:directory_bg)'
+vimcmd_symbol = '[](fg:username_bg bg:purple)[VIS](bg:purple fg:dir_fg)[](fg:purple bg:directory_bg)'
 
 [git_branch]
 format = '[ $branch ](bg:git_bg fg:git_fg)'
