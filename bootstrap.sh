@@ -1,6 +1,7 @@
 #! /bin/bash
 
 # Run SSH service on port 22
+sudo apt-get update
 sudo apt install -y openssh-server
 sudo service ssh start
 
@@ -22,13 +23,13 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ~/.tmux/plugins/tpm/bin/install_plugins
 
 # Configure zsh, aliases
-ln -f -s $PWD/zsh/zshrc $ZSH_CUSTOM/zshrc-custom.zsh
-ln -f -s $PWD/zsh/zsh_aliases $ZSH_CUSTOM/zshrc-aliases.zsh
+zsh_custom_dir=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}
+ln -f -s $PWD/zsh/zshrc $zsh_custom_dir/custom/zshrc-custom.zsh
+ln -f -s $PWD/zsh/zsh_aliases $zsh_custom_dir/zshrc-aliases.zsh
 
 # Configure starship, custom prompt gets overriden
 echo "eval \"\$(starship init zsh)\"" >> ~/.zshrc
 ln -f -s $PWD/starship/starship.toml ~/.config/starship.toml
 
 # Extra steps
-#   1) Remove starship from zshrc
-#   2) Add history-substring-search to ~/.zshrc plugins
+#   1) Add history-substring-search, syntax highlighting to ~/.zshrc plugins
