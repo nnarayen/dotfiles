@@ -24,7 +24,7 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Configure zsh, aliases
 zsh_custom_dir=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}
-ln -f -s $PWD/zsh/zshrc $zsh_custom_dir/custom/zshrc-custom.zsh
+ln -f -s $PWD/zsh/zshrc $zsh_custom_dir/zshrc-custom.zsh
 ln -f -s $PWD/zsh/zsh_aliases $zsh_custom_dir/zshrc-aliases.zsh
 
 # Configure starship, custom prompt gets overriden
