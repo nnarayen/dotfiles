@@ -1,5 +1,4 @@
 local nvim_lsp = require("lspconfig")
-local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
 -- Function to organize imports
 function organize_imports(wait_ms)
@@ -47,7 +46,7 @@ local on_attach = function(client, bufnr)
   })
 end
 
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local capabilities = require("blink.cmp").get_lsp_capabilities()
 nvim_lsp.lua_ls.setup({
   on_attach = on_attach,
   -- Add additional capabilities supported by nvim-cmp

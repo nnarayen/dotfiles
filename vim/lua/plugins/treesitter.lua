@@ -14,6 +14,7 @@ function M.config()
       "vim",
       "typescript",
       "tsx",
+      "python"
     },
     highlight = {
       enable = true,

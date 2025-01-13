@@ -6,7 +6,7 @@ sudo apt install -y openssh-server
 sudo service ssh start
 
 # Install dependencies
-brew install neovim ripgrep fzf bat fd zoxide starship hub tmux
+brew install neovim ripgrep fzf bat fd zoxide starship hub tmux basedpyright xsel
 
 # Configure nvim
 pushd $(dirname $0)

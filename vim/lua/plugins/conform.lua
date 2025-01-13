@@ -8,6 +8,7 @@ function M.config()
     formatters_by_ft = {
       -- Conform will run multiple formatters sequentially
       python = { "isort", "black" },
+      lua = { lsp_format = "fallback" },
     },
   })
 
