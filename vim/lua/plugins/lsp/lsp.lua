@@ -84,3 +84,10 @@ nvim_lsp.ts_ls.setup({
     },
   },
 })
+
+
+nvim_lsp.gopls.setup({
+  on_attach = on_attach,
+  -- Add additional capabilities supported by nvim-cmp
+  capabilities = capabilities,
+})

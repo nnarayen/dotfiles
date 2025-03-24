@@ -7,8 +7,10 @@ function M.config()
   require("conform").setup({
     formatters_by_ft = {
       -- Conform will run multiple formatters sequentially
-      python = { "isort", "black" },
+      python = { "ruff_organize_imports", "ruff_format" },
       lua = { lsp_format = "fallback" },
+      typescript = { lsp_format = "fallback" },
+      go = { lsp_format = "fallback" },
     },
   })
 

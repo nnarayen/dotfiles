@@ -16,7 +16,7 @@ function M.config()
 
   vim.keymap.set("n", "<C-p>", function() fzf_lua.files() end, {})
   vim.keymap.set("n", "S", function() fzf_lua.grep_cword() end, {})
-  vim.keymap.set("n", "<LocalLeader>a", function() fzf_lua.grep() end, {})
+  vim.keymap.set("n", "<LocalLeader>a", function() fzf_lua.grep({ no_esc = true }) end, {})
   vim.keymap.set("n", "<LocalLeader>dR", function() fzf_lua.lsp_references() end, {})
   vim.keymap.set("n", "<LocalLeader>m", function() fzf_lua.keymaps() end, {})
 
