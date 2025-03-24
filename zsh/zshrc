@@ -121,8 +121,11 @@ bindkey -M vicmd E edit-command-line
 ###############################################################################
 # asdf
 ###############################################################################
-if [[ -s "$(brew --prefix asdf)/libexec/asdf.sh" ]]; then
-  source "$(brew --prefix asdf)/libexec/asdf.sh"
+if type brew &>/dev/null
+then
+  if [[ -s "$(brew --prefix asdf)/libexec/asdf.sh" ]]; then
+    source "$(brew --prefix asdf)/libexec/asdf.sh"
+  fi
 fi
 
 ###############################################################################
