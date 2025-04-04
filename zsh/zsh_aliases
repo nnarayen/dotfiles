@@ -9,7 +9,6 @@ alias er="vim ~/.ripgreprc"
 alias eac="vim ~/.config/alacritty/alacritty.yml"
 
 # Miscellany
-alias git="hub"
 alias vim="nvim"
 alias update="source ~/.zshrc && source ~/.zsh_aliases"
 alias sdc="source ~/.access/aws_docker_creds"

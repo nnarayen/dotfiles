@@ -1,0 +1,29 @@
+[general]
+import = [
+	"~/.config/alacritty/themes/themes/midnight_haze.toml"
+]
+
+[window]
+padding.x = 0
+padding.y = 0
+
+decorations = "Full"
+decorations_theme_variant = "Dark"
+
+startup_mode = "Maximized"
+
+[font]
+normal.family = "Iosevka Nerd Font"
+bold.family = "Iosevka Nerd Font"
+italic.family = "Iosevka Nerd Font"
+bold_italic.family = "Iosevka Nerd Font"
+
+size = 18.0
+
+[env]
+term = "xterm-256color"
+
+[[keyboard.bindings]]
+chars = "\u001B[13;2u"
+key = "Return"
+mods = "Shift"
