@@ -11,6 +11,11 @@ function M.config()
   codecompanion.setup({
     strategies = {
       chat = {
+        keymaps = {
+          send = {
+            modes = { i = "<S-CR>" },
+          },
+        },
         adapter = "anthropic",
       },
       inline = {

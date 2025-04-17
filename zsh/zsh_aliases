@@ -33,7 +33,6 @@ alias tma="tmux attach -t"
 alias gp="git pull"
 alias gpu="git push"
 alias gpf="git push -f"
-alias gbd="git branch -D"
 alias gs="git status"
 alias gcl="git checkout -"
 alias gca="git commit --amend --no-edit"
@@ -48,6 +47,36 @@ alias gco="git checkout"
 alias gsp="git stash pop"
 alias gcb="git checkout -b"
 alias gl="git log"
+
+gbdel() {
+  # Check if inside a git repository
+  if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+    echo "Error: Not inside a git repository."
+    return 1
+  fi
+
+  # Get current branch
+  current_branch=$(git branch --show-current)
+
+  # List all branches except the current one (to avoid accidentally deleting the active branch)
+  selected_branches=$(git branch | grep -v "^\*" | sed 's/^[[:space:]]*//' | fzf --multi --header="Delete selected branches: ")
+
+  # Check if any branches were selected
+  if [ -z "$selected_branches" ]; then
+    echo "No branches selected for deletion."
+    return 0
+  fi
+
+  # Delete each selected branch
+  echo "$selected_branches" | while read branch; do
+    if [ "$branch" = "$current_branch" ]; then
+      echo "Cannot delete current branch: $branch"
+    else
+      echo "Deleting branch: $branch"
+      git branch -D "$branch"
+    fi
+  done
+}
 
 # Git rebase
 rbi() {

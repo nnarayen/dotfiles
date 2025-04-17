@@ -1,3 +1,6 @@
+###############################################################################
+# Aliases
+###############################################################################
 if [ -f ~/.baseten_aliases ]; then
   source ~/.baseten_aliases
 fi
@@ -10,7 +13,9 @@ if [[ "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select" || \
     zle -N zle-keymap-select "";
 fi
 
-eval "$(starship init zsh)"
+if which starship > /dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 
 ###############################################################################
 # Tmux
@@ -20,6 +25,17 @@ export LC_ALL=en_US.UTF-8
 export SHELL=$(which zsh)
 
 ###############################################################################
-# Nix
+# Histfile
 ###############################################################################
-export PATH="$HOME/.nix-profile/bin:$PATH"
+# Custom function to save history in UTF-8
+function zshaddhistory_force_utf8() {
+  print -sr -- "${1%%$'\n'}"
+  fc -p "$HISTFILE"
+  return 0
+}
+
+add-zsh-hook zshaddhistory zshaddhistory_force_utf8
+
+setopt HIST_FCNTL_LOCK
+setopt SHARE_HISTORY
+unsetopt HIST_SAVE_BY_COPY

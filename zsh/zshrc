@@ -11,9 +11,6 @@ export PATH=$PATH:/opt/homebrew/bin
 # Use asdf tools
 export PATH=$PATH:$HOME/.asdf
 
-# Use legacy HISTFILE for command search
-export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory"
-
 ###############################################################################
 # Source Prezto
 ###############################################################################
@@ -22,12 +19,27 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 ###############################################################################
+# Nix
+###############################################################################
+export PATH="$HOME/.nix-profile/bin:$PATH"
+
+###############################################################################
 # Miscellany
 ###############################################################################
 
 # Add zsh aliases
 if [ -f ~/.zsh_aliases ]; then
   source ~/.zsh_aliases
+fi
+
+# Add custom aliases
+if [ -f ~/.zsh_aliases.custom ]; then
+  source ~/.zsh_aliases.custom
+fi
+
+# Add secrets
+if [ -f ~/.zshrc-secrets ]; then
+  source ~/.zshrc-secrets
 fi
 
 # Set colorful terminal
@@ -131,11 +143,26 @@ fi
 ###############################################################################
 # zoxide
 ###############################################################################
-eval "$(zoxide init zsh)"
+if which zoxide > /dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
 
 ###############################################################################
 # Starship
 ###############################################################################
 
-# https://github.com/starship/starship/issues/3418#issuecomment-1711630970
-type starship_zle-keymap-select >/dev/null || eval "$(starship init zsh)"
+# Account for multiple source bug, https://github.com/starship/starship/issues/3418#issuecomment-2477375663
+if [[ "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select" || \
+      "${widgets[zle-keymap-select]#user:}" == "starship_zle-keymap-select-wrapped" ]]; then
+    zle -N zle-keymap-select "";
+fi
+
+if which starship > /dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
+
+###############################################################################
+# Docker
+###############################################################################
+# Prevent delays in pressing C-p
+export DOCKER_DETACH_KEYS="ctrl-@"
