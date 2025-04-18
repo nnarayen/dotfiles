@@ -15,6 +15,15 @@ function M.config()
           send = {
             modes = { i = "<S-CR>" },
           },
+          close = {
+            modes = { n = "<Esc>" },
+          },
+          clear = {
+            -- Override clear behavior to start a new chat
+            callback = function()
+              codecompanion.chat()
+            end,
+          }
         },
         adapter = "anthropic",
       },
@@ -29,7 +38,7 @@ function M.config()
           width = 0.3,
         },
       },
-  },
+    },
   })
 
   vim.keymap.set({ "n", "v" }, "<LocalLeader>ch", codecompanion.toggle, { noremap = true, silent = true })

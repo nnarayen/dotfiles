@@ -12,7 +12,7 @@ DEFAULT_ARCH="aarch64-unknown-linux-gnu"
 
 # Install NixOS, tools
 curl -L https://nixos.org/nix/install | sh
-$HOME/.nix-profile/bin/nix-env -iA nixpkgs.basedpyright nixpkgs.git nixpkgs.openssh nixpkgs.bat nixpkgs.fzf nixpkgs.ripgrep nixpkgs.fd nixpkgs.starship nixpkgs.zoxide nixpkgs.neovim nixpkgs.tmux
+$HOME/.nix-profile/bin/nix-env -iA nixpkgs.basedpyright nixpkgs.git nixpkgs.openssh nixpkgs.bat nixpkgs.fzf nixpkgs.ripgrep nixpkgs.fd nixpkgs.starship nixpkgs.zoxide nixpkgs.neovim nixpkgs.tmux nixpkgs.lua-language-server nixpkgs.yq
 
 # Source Nix
 source ~/.nix-profile/etc/profile.d/nix.sh

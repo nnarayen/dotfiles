@@ -5,11 +5,19 @@ local M = {
 
 function M.config()
   require("trouble").setup({
-    severity = { min = vim.diagnostic.severity.WARN },
+    modes = {
+      diagnostics_buffer = {
+        mode = "diagnostics",
+        filter = {
+          buf = 0,
+          severity = { vim.diagnostic.severity.ERROR, vim.diagnostic.severity.WARN }
+        },
+      },
+    }
   })
 
   vim.keymap.set("n", "<LocalLeader>T", function()
-    require("trouble").toggle('diagnostics')
+    require("trouble").toggle('diagnostics_buffer')
   end)
 end
 
