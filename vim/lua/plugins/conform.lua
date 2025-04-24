@@ -11,6 +11,7 @@ function M.config()
       lua = { lsp_format = "fallback" },
       typescript = { lsp_format = "fallback" },
       go = { lsp_format = "fallback" },
+      json = { "jq" },
     },
   })
 

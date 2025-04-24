@@ -11,10 +11,10 @@ function M.config()
       ["<Tab>"] = { "select_next", "fallback" },
       ["<S-Tab>"] = { "select_prev", "fallback" },
     },
+    cmdline = { enabled = false },
+    enabled = function() return not vim.tbl_contains({ "DressingInput" }, vim.bo.filetype) end,
     sources = {
       default = { 'lsp', 'path', 'buffer' },
-      -- Disable cmdline completions
-      cmdline = {},
     },
   })
 end

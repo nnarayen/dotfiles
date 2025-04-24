@@ -7,9 +7,6 @@ sudo apt-get update
 sudo apt install -y openssh-server xsel
 sudo service ssh start
 
-# Set default target architecture if not defined
-DEFAULT_ARCH="aarch64-unknown-linux-gnu"
-
 # Install NixOS, tools
 curl -L https://nixos.org/nix/install | sh
 $HOME/.nix-profile/bin/nix-env -iA nixpkgs.basedpyright nixpkgs.git nixpkgs.openssh nixpkgs.bat nixpkgs.fzf nixpkgs.ripgrep nixpkgs.fd nixpkgs.starship nixpkgs.zoxide nixpkgs.neovim nixpkgs.tmux nixpkgs.lua-language-server nixpkgs.yq
@@ -44,6 +41,11 @@ sudo ln -f -s $PWD/starship/starship.toml ~/.config/starship.toml
 
 # Default shell is zsh
 sudo chsh -s $(which zsh) $(whoami)
+
+# Atuin setup
+curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+sudo mkdir -p ~/.config/atuin
+sudo ln -f -s $PWD/atuin/config.toml $HOME/.config/atuin/config.toml
 
 # Add additional zsh plugins
 zsh_home=${ZSH:-~/.oh-my-zsh}
