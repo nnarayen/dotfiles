@@ -4,6 +4,5 @@ return {
   "tpope/vim-repeat",
   "wellle/targets.vim",
   "rhysd/clever-f.vim",
-  "tpope/vim-sleuth",
   "machakann/vim-swap",
 }
