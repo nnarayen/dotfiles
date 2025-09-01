@@ -7,8 +7,26 @@ local M = {
 }
 
 function M.config()
-  codecompanion = require("codecompanion")
+  local codecompanion = require("codecompanion")
+  local adapters = require("codecompanion.adapters")
   codecompanion.setup({
+    adapters = {
+      baseten = function()
+        return adapters.extend("openai_compatible", {
+          env = {
+            url = "https://inference.baseten.co",
+            api_key = "BASETEN_API_KEY",
+            chat_url = "/v1/chat/completions",
+            models_endpoint = "/v1/models",
+          },
+          schema = {
+            model = {
+              default = "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+            },
+          },
+        })
+      end,
+    },
     strategies = {
       chat = {
         keymaps = {
@@ -25,10 +43,10 @@ function M.config()
             end,
           }
         },
-        adapter = "anthropic",
+        adapter = "baseten",
       },
       inline = {
-        adapter = "anthropic",
+        adapter = "baseten",
       },
     },
     display = {

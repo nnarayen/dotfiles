@@ -5,10 +5,10 @@ local M = {
 function M.config()
   require("cutlass").setup({
     cut_key = 'd',
-    exclude = {
-      { 'nd', 'nD' }
-    }
   })
+
+  -- Blackhole D operation
+  vim.api.nvim_set_keymap('n', 'D', '"_D', { noremap = true, silent = true })
 end
 
 return M
