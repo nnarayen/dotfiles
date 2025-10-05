@@ -1,15 +1,13 @@
 local M = {
   "linux-cultist/venv-selector.nvim",
-  branch = "regexp",
+  ft = "python",
   dependencies = {
     "nvim-telescope/telescope.nvim"
   }
 }
 
 function M.config()
-  require('venv-selector').setup({
-    poetry_path = "/home/vscode/.cache/pypoetry/virtualenvs"
-  })
+  require('venv-selector').setup({ })
 end
 
 return M

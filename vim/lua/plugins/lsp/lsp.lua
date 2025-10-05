@@ -1,5 +1,3 @@
-local nvim_lsp = require("lspconfig")
-
 -- Function to organize imports
 function organize_imports(wait_ms)
   vim.lsp.buf.code_action({
@@ -46,11 +44,13 @@ local on_attach = function(client, bufnr)
   })
 end
 
-local capabilities = require("blink.cmp").get_lsp_capabilities()
-nvim_lsp.lua_ls.setup({
+-- Global LSP settings
+vim.lsp.config('*', {
   on_attach = on_attach,
-  -- Add additional capabilities supported by nvim-cmp
-  capabilities = capabilities,
+  capabilities = require("blink.cmp").get_lsp_capabilities(),
+})
+
+vim.lsp.config('lua_ls', {
   settings = {
     Lua = {
       diagnostics = {
@@ -61,23 +61,19 @@ nvim_lsp.lua_ls.setup({
   }
 })
 
-nvim_lsp.basedpyright.setup({
-  on_attach = on_attach,
-  capabilities = capabilities,
+vim.lsp.config('basedpyright', {
+  filetypes = { 'python' },
   settings = {
     basedpyright = {
-      disableOrganizeImports = true, -- use isort
-      analysis = {
-        typeCheckingMode = "off"
-      }
+      disableOrganizeImports = true, -- use ruff
+      analysis = { typeCheckingMode = "off" },
     },
   },
 })
 
-nvim_lsp.ts_ls.setup({
+vim.lsp.config('ts_ls', {
+  filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
   on_attach = on_attach,
-  -- Add additional capabilities supported by nvim-cmp
-  capabilities = capabilities,
   init_options = {
     preferences = {
       importModuleSpecifierPreference = "relative",
@@ -86,8 +82,8 @@ nvim_lsp.ts_ls.setup({
 })
 
 
-nvim_lsp.gopls.setup({
-  on_attach = on_attach,
-  -- Add additional capabilities supported by nvim-cmp
-  capabilities = capabilities,
+vim.lsp.config('gopls', {
+  filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
 })
+
+vim.lsp.enable({ 'lua_ls', 'basedpyright', 'ts_ls', 'gopls' })

@@ -11,21 +11,23 @@ function M.config()
   local adapters = require("codecompanion.adapters")
   codecompanion.setup({
     adapters = {
-      baseten = function()
-        return adapters.extend("openai_compatible", {
-          env = {
-            url = "https://inference.baseten.co",
-            api_key = "BASETEN_API_KEY",
-            chat_url = "/v1/chat/completions",
-            models_endpoint = "/v1/models",
-          },
-          schema = {
-            model = {
-              default = "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+      http = {
+        baseten = function()
+          return adapters.extend("openai_compatible", {
+            env = {
+              url = "https://inference.baseten.co",
+              api_key = "BASETEN_API_KEY",
+              chat_url = "/v1/chat/completions",
+              models_endpoint = "/v1/models",
             },
-          },
-        })
-      end,
+            schema = {
+              model = {
+                default = "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+              },
+            },
+          })
+        end,
+      }
     },
     strategies = {
       chat = {
