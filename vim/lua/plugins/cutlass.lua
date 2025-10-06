@@ -1,5 +1,6 @@
 local M = {
   "gbprod/cutlass.nvim",
+  enabled = true,
 }
 
 function M.config()

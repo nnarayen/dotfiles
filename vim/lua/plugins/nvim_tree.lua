@@ -3,6 +3,7 @@ local M = {
   dependencies = {
     "nvim-tree/nvim-web-devicons",
   },
+  enabled = true,
 }
 
 local function on_attach(bufnr)

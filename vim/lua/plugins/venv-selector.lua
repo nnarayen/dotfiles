@@ -3,7 +3,8 @@ local M = {
   ft = "python",
   dependencies = {
     "nvim-telescope/telescope.nvim"
-  }
+  },
+  enabled = true,
 }
 
 function M.config()

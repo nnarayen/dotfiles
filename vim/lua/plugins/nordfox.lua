@@ -6,4 +6,5 @@ return {
     -- load the colorscheme here
     vim.cmd([[colorscheme nordfox]])
   end,
+  enabled = true,
 }

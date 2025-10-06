@@ -1,5 +1,6 @@
 local M = {
   "MeanderingProgrammer/render-markdown.nvim",
+  enabled = true,
 }
 
 function M.config()

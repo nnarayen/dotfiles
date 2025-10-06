@@ -2,6 +2,7 @@ local M = {
   "saghen/blink.cmp",
   -- use a release tag to download pre-built binaries
   version = '1.*',
+  enabled = true,
 }
 
 function M.config()

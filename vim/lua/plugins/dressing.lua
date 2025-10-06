@@ -1,5 +1,6 @@
 local M = {
   "stevearc/dressing.nvim",
+  enabled = true,
 }
 
 function M.config()

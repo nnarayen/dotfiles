@@ -1,5 +1,6 @@
 local M = {
   "neovim/nvim-lspconfig",
+  enabled = true,
 }
 
 function M.config()

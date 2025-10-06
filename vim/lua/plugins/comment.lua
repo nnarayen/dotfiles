@@ -1,5 +1,6 @@
 local M = {
   "numToStr/Comment.nvim",
+  enabled = true,
 }
 
 function M.config()

@@ -1,5 +1,6 @@
 local M = {
   "gbprod/yanky.nvim",
+  enabled = true,
 }
 
 function M.config()

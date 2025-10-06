@@ -86,4 +86,5 @@ vim.lsp.config('gopls', {
   filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
 })
 
-vim.lsp.enable({ 'lua_ls', 'basedpyright', 'ts_ls', 'gopls' })
+vim.lsp.config('copilot', {})
+vim.lsp.enable({ 'lua_ls', 'basedpyright', 'ts_ls', 'gopls', 'copilot' })

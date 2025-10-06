@@ -1,5 +1,6 @@
 local M = {
   "linrongbin16/gitlinker.nvim",
+  enabled = true,
 }
 
 function M.config()

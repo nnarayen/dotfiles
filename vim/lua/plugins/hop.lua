@@ -12,4 +12,5 @@ return {
     { "<LocalLeader>w", ":HopWord<CR>", desc = "Highlight forward" },
     { "<LocalLeader>b", ":HopWord<CR>", desc = "Highlight backwards" },
   },
+  enabled = true,
 }

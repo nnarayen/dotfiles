@@ -3,4 +3,5 @@ return {
   opts = {
     toggle_key = "<C-h>",
   },
+  enabled = true,
 }

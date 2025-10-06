@@ -3,6 +3,7 @@ local M = {
   dependencies = {
     "nvim-lua/plenary.nvim",
   },
+  enabled = true,
 }
 
 function M.config()

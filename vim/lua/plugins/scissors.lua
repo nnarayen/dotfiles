@@ -1,5 +1,6 @@
 local M = {
   "chrisgrieser/nvim-scissors",
+  enabled = true,
 }
 
 function M.config()

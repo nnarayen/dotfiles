@@ -7,6 +7,7 @@ local M = {
     "antoinemadec/FixCursorHold.nvim",
     "nvim-treesitter/nvim-treesitter",
   },
+  enabled = true,
 }
 
 function M.config()

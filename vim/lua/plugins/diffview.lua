@@ -1,5 +1,6 @@
 local M = {
   "sindrets/diffview.nvim",
+  enabled = true,
 }
 
 function M.config()

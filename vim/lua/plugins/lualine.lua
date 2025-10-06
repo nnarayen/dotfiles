@@ -49,4 +49,5 @@ return {
   dependecies = {
     "kyazdani42/nvim-web-devicons",
   },
+  enabled = true,
 }

@@ -1,5 +1,6 @@
 local M = {
   "stevearc/conform.nvim",
+  enabled = true,
 }
 
 function M.config()

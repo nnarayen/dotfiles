@@ -9,4 +9,5 @@ return {
     { "<C-k>", ":NavigatorUp<CR>", desc = "Move window down", mode = "n" },
     { "<C-l>", ":NavigatorRight<CR>", desc = "Move window right", mode = "n" },
   },
+  enabled = true,
 }

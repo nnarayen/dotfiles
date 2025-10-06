@@ -1,6 +1,7 @@
 local M = {
   "folke/trouble.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
+  enabled = true,
 }
 
 function M.config()

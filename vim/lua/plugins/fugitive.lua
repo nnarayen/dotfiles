@@ -11,4 +11,5 @@ return {
   dependencies = {
     "tpope/vim-rhubarb",
   },
+  enabled = true,
 }
