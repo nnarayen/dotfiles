@@ -30,15 +30,14 @@ local on_attach = function(client, bufnr)
 
   -- diagnostics, only warn/error
   vim.keymap.set("n", "<LocalLeader>dn", function()
-    vim.diagnostic.goto_prev({ severity = min_severity })
+    vim.diagnostic.jump({ count = 1, severity = min_severity, float = false })
   end, opts)
   vim.keymap.set("n", "<LocalLeader>dp", function()
-    vim.diagnostic.goto_next({ severity = min_severity })
+    vim.diagnostic.jump({ count = -1, severity = min_severity, float = false })
   end, opts)
 
   -- enable diagnosts for warn/error only
   vim.diagnostic.config({
-    virtual_text = { severity = min_severity },
     signs = { severity = min_severity },
     underline = { severity = min_severity },
   })
@@ -62,7 +61,7 @@ vim.lsp.config('lua_ls', {
 })
 
 vim.lsp.config('basedpyright', {
-  filetypes = { 'python' },
+  on_attach = on_attach,
   settings = {
     basedpyright = {
       disableOrganizeImports = true, -- use ruff
