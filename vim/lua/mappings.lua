@@ -38,9 +38,6 @@ map("n", "<LocalLeader>q", ":nohlsearch<CR>", default_options)
 -- Update buffer
 map("n", "<LocalLeader>r", ":checktime<CR>", default_options)
 
--- Search for word under cursor
--- map("n", "S", ":Rg <C-R><C-W><CR>", default_options)
-
 -- Copy relative/absolute file paths
 map("n", "<LocalLeader>u", ":let @+=expand('%')<CR>", default_options)
 map("n", "<LocalLeader>U", ":let @+=expand('%:p')<CR>", default_options)
@@ -51,6 +48,10 @@ vim.cmd("cnoreabbrev Q q")
 vim.cmd("cnoreabbrev WQ wq")
 vim.cmd("cnoreabbrev Wq wq")
 vim.cmd("cnoreabbrev wQ wq")
+
+-- Better paste
+vim.keymap.set('n', 'p', 'p`[v`]=', { desc = 'Paste and auto-indent' })
+vim.keymap.set('n', 'P', 'P`[v`]=', { desc = 'Paste before and auto-indent' })
 
 -----------------------------------------------------
 -- Vim Swap

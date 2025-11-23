@@ -2,6 +2,9 @@ local M = {
   "nvim-treesitter/nvim-treesitter",
   build = ":TSUpdate",
   enabled = true,
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+  },
 }
 
 function M.config()
@@ -35,6 +38,27 @@ function M.config()
     },
     matchup = {
       enable = true,
+    },
+    textobjects = {
+      swap = {
+        enable = true,
+        swap_next = {
+          ["gl"] = "@parameter.inner"
+        },
+        swap_previous = {
+          ["gh"] = "@parameter.inner"
+        },
+      },
+      move = {
+        enable = true,
+        set_jumps = true, -- whether to set jumps in the jumplist
+        goto_next_start = {
+          ["gF"] = "@function.outer",
+        },
+        goto_previous_start = {
+          ["gf"] = "@function.outer",
+        },
+      },
     },
   })
 end

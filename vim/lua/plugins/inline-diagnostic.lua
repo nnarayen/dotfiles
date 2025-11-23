@@ -12,6 +12,7 @@ function M.config()
         enabled = true,
         always_show = true,
         trim_whitespaces = true,
+        severity = { vim.diagnostic.severity.ERROR },
       },
       severity = {
         vim.diagnostic.severity.ERROR,
