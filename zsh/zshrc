@@ -1,24 +1,59 @@
 ###############################################################################
 # Path configuration
 ###############################################################################
-export PATH=$PATH:/usr/bin
-export PATH=$PATH:/bin
-export PATH=$PATH:/usr/sbin
-export PATH=$PATH:/sbin
 export PATH=$PATH:$HOME/go/bin
 export PATH=$PATH:/opt/homebrew/bin
 
 ###############################################################################
-# Source Prezto
+# Zinit
 ###############################################################################
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
+source "${HOME}/.local/share/zinit/zinit.git/zinit.zsh"
 
-###############################################################################
-# Nix
-###############################################################################
-export PATH="$HOME/.nix-profile/bin:$PATH"
+# Core Settings
+bindkey -v
+export KEYTIMEOUT=10
+
+# Directory navigation
+setopt auto_cd
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushd_minus
+
+# Colors
+export LSCOLORS='GxfxcxdxbxGxDxgabaxxxx'
+export LS_COLORS='di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+
+# Completion styles (set before compinit runs)
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Completions (turbo mode)
+zinit wait lucid blockf atpull'zinit creinstall -q .' for \
+  zsh-users/zsh-completions
+
+# Substring search (turbo mode)
+zinit ice wait lucid \
+  atload"
+    bindkey -M viins '$terminfo[cuu1]' history-substring-search-up
+    bindkey -M viins '$terminfo[cud1]' history-substring-search-down
+    bindkey -M vicmd 'k' history-substring-search-up
+    bindkey -M vicmd 'j' history-substring-search-down
+  "
+zinit light zsh-users/zsh-history-substring-search
+
+# Fast syntax highlighting (turbo mode - MUST BE LAST)
+zinit ice wait lucid \
+  atinit"zicompinit; zicdreplay" \
+  atload"
+    FAST_HIGHLIGHT_STYLES[unknown-token]='fg=red,bold'
+    FAST_HIGHLIGHT_STYLES[reserved-word]='fg=green,bold'
+    FAST_HIGHLIGHT_STYLES[alias]='fg=green,bold'
+    FAST_HIGHLIGHT_STYLES[command]='fg=green,bold'
+    FAST_HIGHLIGHT_STYLES[path]='fg=cyan'
+    FAST_HIGHLIGHT_STYLES[path_prefix]='fg=cyan'
+  "
+zinit light zdharma-continuum/fast-syntax-highlighting
 
 ###############################################################################
 # Miscellany
@@ -58,22 +93,16 @@ export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 if type brew &>/dev/null
 then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-
-  autoload -Uz compinit
-  compinit
 fi
 
 ###############################################################################
 # FZF
 ###############################################################################
-if which fzf > /dev/null 2>&1; then
-  source <(fzf --zsh)
-
-  # FZF options
+[[ -x "$(command -v fzf)" ]] && source <(fzf --zsh) && {
   export FZF_DEFAULT_COMMAND="fd --type file --hidden --strip-cwd-prefix"
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_CTRL_R_OPTS='--sort'
-fi
+}
 
 ###############################################################################
 # Vi Mode
@@ -82,11 +111,7 @@ bindkey -v
 bindkey -M viins 'jk' vi-cmd-mode
 bindkey '^?' backward-delete-char
 
-bindkey -M viins "$terminfo[cuu1]" history-substring-search-up
-bindkey -M viins "$terminfo[cud1]" history-substring-search-down
 bindkey -M viins "^u" clear-screen
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
 bindkey -M vicmd '^a' beginning-of-line
 bindkey -M vicmd '^e' end-of-line
 bindkey -M vicmd 'H' beginning-of-line
@@ -130,9 +155,8 @@ bindkey -M vicmd E edit-command-line
 ###############################################################################
 # zoxide
 ###############################################################################
-if which zoxide > /dev/null 2>&1; then
-  eval "$(zoxide init zsh)"
-fi
+zinit wait lucid nocd atload'eval "$(zoxide init zsh)"' for \
+  zdharma-continuum/null
 
 ###############################################################################
 # Starship
@@ -149,12 +173,30 @@ if which starship > /dev/null 2>&1; then
 fi
 
 ###############################################################################
-# Mise
-###############################################################################
-eval "$(mise activate zsh)"
-
-###############################################################################
 # Docker
 ###############################################################################
 # Prevent delays in pressing C-p
 export DOCKER_DETACH_KEYS="ctrl-@"
+
+###############################################################################
+# Atuin
+###############################################################################
+. "$HOME/.atuin/bin/env"
+eval "$(atuin init zsh --disable-up-arrow)"
+
+###############################################################################
+# Mise
+###############################################################################
+zinit wait lucid nocd atload'eval "$(mise activate zsh)"' for \
+  zdharma-continuum/null
+
+###############################################################################
+# Proto
+###############################################################################
+export PROTO_HOME="$HOME/.proto";
+export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH"
+
+###############################################################################
+# Cargo
+###############################################################################
+. "$HOME/.cargo/env"

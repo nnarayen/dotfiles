@@ -23,7 +23,7 @@ function M.config()
             },
             schema = {
               model = {
-                default = "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+                default = "openai/gpt-oss-120b",
               },
             },
           })
