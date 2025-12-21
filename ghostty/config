@@ -1,0 +1,27 @@
+theme = monokai pro octagon
+
+# Set up block cursor, no blinking
+cursor-style = block
+cursor-style-blink = false
+shell-integration-features = no-cursor
+
+# No confirmation on close
+confirm-close-surface = false
+
+# No padding
+window-padding-x = 0
+window-padding-y = 0
+window-theme = dark
+
+font-size = 18
+font-family = IosevkaTerm Nerd Font
+font-family-bold = IosevkaTerm Nerd Font Bold
+font-family-italic = IosevkaTerm Nerd Font Italic
+font-family-italic = IosevkaTerm Nerd Font Bold Italic
+
+# Keybindings
+keybind = cmd+shift+p=ignore
+keybind = shift+enter=text:\x1b[13;2u
+
+# Preserve fullscreen
+maximize = true
