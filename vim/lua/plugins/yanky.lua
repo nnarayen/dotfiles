@@ -5,10 +5,7 @@ local M = {
 
 function M.config()
   require("yanky").setup({
-    highlight = {
-      on_put = false,
-      timer = 200,
-    },
+    highlight = { on_put = true, timer = 200 },
   })
 
   -- Key mappings

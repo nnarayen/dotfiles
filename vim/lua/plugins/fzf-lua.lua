@@ -6,11 +6,24 @@ local M = {
 
 function M.config()
   local fzf_lua = require("fzf-lua")
-  local actions = fzf_lua.actions
 
   fzf_lua.setup({
     grep = {
       input_prompt = 'Rg❯ '
+    },
+    files = {
+      actions = {
+        ["ctrl-o"] = function(selected, opts)
+          fzf_lua.buffers()
+        end,
+      },
+    },
+    buffers = {
+      actions = {
+        ["ctrl-p"] = function(selected, opts)
+          fzf_lua.files()
+        end,
+      },
     },
   })
 

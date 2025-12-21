@@ -1,15 +1,3 @@
--- Function to organize imports
-function organize_imports(wait_ms)
-  vim.lsp.buf.code_action({
-    context = {
-      only = {
-        "source.addMissingImports",
-      },
-    },
-    apply = true,
-  })
-end
-
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
@@ -22,11 +10,6 @@ local on_attach = function(client, bufnr)
   vim.keymap.set("n", "<LocalLeader>do", vim.diagnostic.open_float, opts)
   vim.keymap.set("n", "<LocalLeader>k", vim.lsp.buf.hover, opts)
   vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-
-  -- imports
-  vim.keymap.set("n", "<LocalLeader>di", function()
-    organize_imports(3000)
-  end, opts)
 
   -- diagnostics, only warn/error
   vim.keymap.set("n", "<LocalLeader>dn", function()
@@ -70,6 +53,20 @@ vim.lsp.config('basedpyright', {
   },
 })
 
+-- Setup `ty`, disable diagnostics for python files.
+vim.lsp.config('ty', {
+  settings = {
+    ty = {},
+  },
+})
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*.py',
+  callback = function(args)
+    vim.diagnostic.disable(args.buf)
+  end,
+})
+
 vim.lsp.config('ts_ls', {
   filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
   on_attach = on_attach,
@@ -86,4 +83,4 @@ vim.lsp.config('gopls', {
 })
 
 vim.lsp.config('copilot', {})
-vim.lsp.enable({ 'lua_ls', 'basedpyright', 'ts_ls', 'gopls', 'copilot' })
+vim.lsp.enable({ 'lua_ls', 'ty', 'ts_ls', 'gopls', 'copilot' })

@@ -46,10 +46,18 @@ function M.config()
             end,
           }
         },
-        adapter = "baseten",
+        slash_commands = {
+          ["buffer"] = {
+            opts = { provider = "fzf_lua", },
+          },
+        },
+        adapter = {
+          name = "anthropic",
+          model = "claude-opus-4-5-20251101",
+        },
       },
       inline = {
-        adapter = "baseten",
+        adapter = "anthropic",
       },
     },
     display = {

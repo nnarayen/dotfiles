@@ -49,10 +49,6 @@ vim.cmd("cnoreabbrev WQ wq")
 vim.cmd("cnoreabbrev Wq wq")
 vim.cmd("cnoreabbrev wQ wq")
 
--- Better paste
-vim.keymap.set('n', 'p', 'p`[v`]=', { desc = 'Paste and auto-indent' })
-vim.keymap.set('n', 'P', 'P`[v`]=', { desc = 'Paste before and auto-indent' })
-
 -----------------------------------------------------
 -- Vim Swap
 -----------------------------------------------------

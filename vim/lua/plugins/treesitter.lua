@@ -18,7 +18,8 @@ function M.config()
       "vim",
       "typescript",
       "tsx",
-      "python"
+      "python",
+      "yaml",
     },
     highlight = {
       enable = true,
@@ -51,7 +52,7 @@ function M.config()
       },
       move = {
         enable = true,
-        set_jumps = true, -- whether to set jumps in the jumplist
+        set_jumps = true,
         goto_next_start = {
           ["gF"] = "@function.outer",
         },

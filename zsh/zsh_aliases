@@ -107,3 +107,6 @@ fi
 
 # Docker
 alias dsa="docker stop \$(docker ps -q)"
+
+# btop
+alias top="btop"
