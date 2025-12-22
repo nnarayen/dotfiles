@@ -3,6 +3,7 @@ local M = {
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
+    "ravitemer/codecompanion-history.nvim",
   },
   enabled = true,
 }
@@ -11,6 +12,11 @@ function M.config()
   local codecompanion = require("codecompanion")
   local adapters = require("codecompanion.adapters")
   codecompanion.setup({
+    rules = {
+      opts = {
+        chat = { enabled = false },
+      },
+    },
     adapters = {
       http = {
         baseten = function()
@@ -68,12 +74,20 @@ function M.config()
         },
       },
     },
+    extensions = {
+      history = {
+        enabled = true,
+        opts = {
+          keymap = "gh",
+          auto_save = true,
+          expiration_days = 2,
+          picker = "fzf-lua",
+        }
+      }
+    }
   })
 
   vim.keymap.set({ "n" }, "<LocalLeader>hc", codecompanion.toggle, { noremap = true, silent = true })
-
-  -- Expand 'cc' into 'CodeCompanion' in the command line
-  vim.cmd([[cab cc CodeCompanion]])
 end
 
 return M
