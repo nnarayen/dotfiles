@@ -12,19 +12,9 @@ function M.config()
   })
 end
 
-function normal_toggle()
-  require("Comment.api").toggle.linewise.current()
-end
-
-function visual_toggle()
-  local esc = vim.api.nvim_replace_termcodes("<ESC>", true, false, true)
-  vim.api.nvim_feedkeys(esc, "nx", false)
-  require("Comment.api").toggle.linewise(vim.fn.visualmode())
-end
-
 M.keys = {
-  { "<LocalLeader>c", normal_toggle, desc = "Toggle comment" },
-  { "<LocalLeader>c", visual_toggle, desc = "Toggle comment", mode = "v" },
+  { "<LocalLeader>c", "<Plug>(comment_toggle_linewise_current)", desc = "Toggle comment" },
+  { "<LocalLeader>c", "<Plug>(comment_toggle_linewise_visual)",  desc = "Toggle comment", mode = "v" },
 }
 
 return M

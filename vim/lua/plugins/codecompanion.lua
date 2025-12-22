@@ -53,7 +53,7 @@ function M.config()
         },
         adapter = {
           name = "anthropic",
-          model = "claude-opus-4-5-20251101",
+          model = "claude-opus-4-5",
         },
       },
       inline = {
@@ -70,8 +70,7 @@ function M.config()
     },
   })
 
-  vim.keymap.set({ "n", "v" }, "<LocalLeader>ch", codecompanion.toggle, { noremap = true, silent = true })
-  vim.keymap.set({ "n", "v" }, "<LocalLeader>ci", ":CodeCompanion ", { noremap = true })
+  vim.keymap.set({ "n" }, "<LocalLeader>hc", codecompanion.toggle, { noremap = true, silent = true })
 
   -- Expand 'cc' into 'CodeCompanion' in the command line
   vim.cmd([[cab cc CodeCompanion]])

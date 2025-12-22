@@ -13,6 +13,7 @@ function M.config()
       typescript = { lsp_format = "fallback" },
       go = { lsp_format = "fallback" },
       json = { "jq" },
+      hcl = { "terraform_fmt" },
     },
   })
 
