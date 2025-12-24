@@ -36,7 +36,7 @@ function M.config()
         end,
       }
     },
-    strategies = {
+    interactions = {
       chat = {
         keymaps = {
           send = {

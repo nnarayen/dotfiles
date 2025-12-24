@@ -15,10 +15,6 @@ return {
           "diagnostics",
           sources = { "nvim_diagnostic" },
           sections = { "error" },
-          -- Disable diagnostic errors for python.
-          cond = function()
-            return vim.bo.filetype ~= 'python'
-          end,
         },
       },
       lualine_c = {

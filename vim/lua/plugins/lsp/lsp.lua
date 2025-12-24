@@ -56,15 +56,10 @@ vim.lsp.config('basedpyright', {
 -- Setup `ty`, disable diagnostics for python files.
 vim.lsp.config('ty', {
   settings = {
-    ty = {},
+    ty = {
+      diagnosticMode = "off",
+    },
   },
-})
-
-vim.api.nvim_create_autocmd('BufEnter', {
-  pattern = '*.py',
-  callback = function(args)
-    vim.diagnostic.disable(args.buf)
-  end,
 })
 
 vim.lsp.config('ts_ls', {
