@@ -1,0 +1,42 @@
+[settings]
+idiomatic_version_file_enable_tools = ["python"]
+
+[tools]
+node = "25.2.1"
+python = "3.14.2"
+go = "1.25.3"
+
+terraform = { version = "latest" }
+helm = { version = "latest" }
+flux2 = { version = "latest" }
+k9s = { version = "latest" }
+crane = { version = "latest" }
+git-lfs = { version = "latest" }
+github-cli = { version = "latest" }
+hub = { version = "latest" }
+depot = { version = "latest" }
+aws-cli = { version = "latest" }
+rancher = { version = "latest" }
+uv = { version = "latest" }
+
+# CLI utilities
+atuin = { version = "latest" }
+bat = { version = "latest" }
+fd = { version = "latest" }
+fzf = { version = "latest" }
+ripgrep = { version = "latest" }
+jq = { version = "latest" }
+zoxide = { version = "latest" }
+starship = { version = "latest" }
+usage = { version = "latest" }
+neovim = { version = "latest" }
+rclone = { version = "latest" }
+tmux = { version = "latest" }
+
+# LSP / Languages
+lua-language-server = { version = "latest" }
+"github:astral-sh/ty" = { version = "latest" }
+
+
+[tool_alias]
+ty = "github:astral-sh/ty"
