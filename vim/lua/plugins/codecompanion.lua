@@ -19,6 +19,14 @@ function M.config()
     },
     adapters = {
       http = {
+        opts = { show_presets = false },
+        anthropic = function()
+          return adapters.extend("anthropic", {
+            env = {
+              api_key = "PERSONAL_ANTHROPIC_API_KEY",
+            },
+          })
+        end,
         baseten = function()
           return adapters.extend("openai_compatible", {
             env = {
@@ -29,12 +37,30 @@ function M.config()
             },
             schema = {
               model = {
-                default = "openai/gpt-oss-120b",
+                default = "moonshotai/Kimi-K2.5",
               },
             },
           })
         end,
-      }
+      },
+      acp = {
+        opts = { show_presets = false },
+        opencode = function()
+          return adapters.extend("opencode", {})
+        end,
+        claude_code = function()
+          return adapters.extend("claude_code", {
+            defaults = {
+              model = function(self)
+                return "opus"
+              end,
+            },
+            env = {
+              CLAUDE_CODE_OAUTH_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN",
+            },
+          })
+        end,
+      },
     },
     interactions = {
       chat = {
@@ -57,16 +83,14 @@ function M.config()
             opts = { provider = "fzf_lua", },
           },
         },
-        adapter = {
-          name = "anthropic",
-          model = "claude-opus-4-5",
-        },
+        adapter = "baseten",
       },
-      inline = {
-        adapter = "anthropic",
-      },
+      inline = { adapter = "anthropic" },
     },
     display = {
+      action_palette = {
+        provider = "fzf_lua",
+      },
       chat = {
         -- Options to customize the UI of the chat buffer
         window = {
@@ -82,7 +106,10 @@ function M.config()
           auto_save = true,
           expiration_days = 2,
           picker = "fzf-lua",
-        }
+          title_generation_opts = {
+            adapter = "baseten",
+          },
+        },
       }
     }
   })

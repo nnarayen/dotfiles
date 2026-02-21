@@ -4,7 +4,11 @@ local M = {
 }
 
 function M.config()
-  require("dressing").setup({})
+  require("dressing").setup({
+    select = {
+      backend = { "fzf_lua", "telescope", "builtin" },
+    },
+  })
 end
 
 return M

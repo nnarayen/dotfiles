@@ -19,6 +19,11 @@ local on_attach = function(client, bufnr)
     vim.diagnostic.jump({ count = -1, severity = min_severity, float = false })
   end, opts)
 
+  -- restart LSP server
+  vim.keymap.set("n", "<LocalLeader>lr", function()
+    vim.cmd("LspRestart")
+  end, opts)
+
   -- enable diagnosts for warn/error only
   vim.diagnostic.config({
     signs = { severity = min_severity },
@@ -77,5 +82,4 @@ vim.lsp.config('gopls', {
   filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
 })
 
-vim.lsp.config('copilot', {})
-vim.lsp.enable({ 'lua_ls', 'ty', 'ts_ls', 'gopls', 'copilot' })
+vim.lsp.enable({ 'lua_ls', 'ty', 'ts_ls', 'gopls' })

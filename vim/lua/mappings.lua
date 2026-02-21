@@ -37,6 +37,13 @@ map("n", "<LocalLeader>q", ":nohlsearch<CR>", default_options)
 
 -- Update buffer
 map("n", "<LocalLeader>r", ":checktime<CR>", default_options)
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    if vim.bo.buftype == "" then
+      vim.cmd("checktime")
+    end
+  end,
+})
 
 -- Copy relative/absolute file paths
 map("n", "<LocalLeader>u", ":let @+=expand('%')<CR>", default_options)

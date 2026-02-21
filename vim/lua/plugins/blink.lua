@@ -3,6 +3,9 @@ local M = {
   -- use a release tag to download pre-built binaries
   version = '1.*',
   enabled = true,
+  dependencies = {
+    "Kaiser-Yang/blink-cmp-avante",
+  },
 }
 
 function M.config()
@@ -15,7 +18,13 @@ function M.config()
     cmdline = { enabled = false },
     enabled = function() return not vim.tbl_contains({ "DressingInput" }, vim.bo.filetype) end,
     sources = {
-      default = { 'lsp', 'path', 'buffer' },
+      default = { 'lsp', 'path', 'buffer', 'avante' },
+      providers = {
+        avante = {
+          module = "blink-cmp-avante",
+          name = "Avante",
+        },
+      },
     },
   })
 end
