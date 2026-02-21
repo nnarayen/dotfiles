@@ -25,3 +25,7 @@ keybind = shift+enter=text:\x1b[13;2u
 
 # Preserve fullscreen
 maximize = true
+
+# Clipboard
+clipboard-read = allow
+clipboard-write= allow
