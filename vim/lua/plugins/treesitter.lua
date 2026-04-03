@@ -8,58 +8,44 @@ local M = {
 }
 
 function M.config()
-  require("nvim-treesitter.configs").setup({
-    ensure_installed = {
-      "bash",
-      "go",
-      "hcl",
-      "json",
-      "lua",
-      "vim",
-      "typescript",
-      "tsx",
-      "python",
-      "yaml",
-    },
-    highlight = {
+  require("nvim-treesitter").install({
+    "bash",
+    "go",
+    "gomod",
+    "gosum",
+    "hcl",
+    "json",
+    "lua",
+    "vim",
+    "vimdoc",
+    "typescript",
+    "tsx",
+    "python",
+    "yaml",
+  })
+
+  -- Enable treesitter highlighting for buffers with an installed parser
+  vim.api.nvim_create_autocmd("FileType", {
+    callback = function(args)
+      local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
+      if lang and vim.treesitter.language.add(lang) then
+        vim.treesitter.start(args.buf)
+      end
+    end,
+  })
+
+  -- Textobjects
+  require("nvim-treesitter-textobjects").setup({
+    swap = {
       enable = true,
-      -- disable double highlighting
-      additional_vim_regex_highlighting = false,
-      -- disable slow treesitter highlight for large files
-      disable = function(lang, buf)
-        local max_filesize = 100 * 1024 -- 100 KB
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-          return true
-        end
-      end,
+      swap_next = { ["gl"] = "@parameter.inner" },
+      swap_previous = { ["gh"] = "@parameter.inner" },
     },
-    indent = {
+    move = {
       enable = true,
-    },
-    matchup = {
-      enable = true,
-    },
-    textobjects = {
-      swap = {
-        enable = true,
-        swap_next = {
-          ["gl"] = "@parameter.inner"
-        },
-        swap_previous = {
-          ["gh"] = "@parameter.inner"
-        },
-      },
-      move = {
-        enable = true,
-        set_jumps = true,
-        goto_next_start = {
-          ["gF"] = "@function.outer",
-        },
-        goto_previous_start = {
-          ["gf"] = "@function.outer",
-        },
-      },
+      set_jumps = true,
+      goto_next_start = { ["gF"] = "@function.outer" },
+      goto_previous_start = { ["gf"] = "@function.outer" },
     },
   })
 end

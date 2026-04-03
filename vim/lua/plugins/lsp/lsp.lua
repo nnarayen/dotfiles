@@ -21,7 +21,10 @@ local on_attach = function(client, bufnr)
 
   -- restart LSP server
   vim.keymap.set("n", "<LocalLeader>lr", function()
-    vim.cmd("LspRestart")
+    for _, client in ipairs(vim.lsp.get_clients({ bufnr = bufnr })) do
+      client:stop()
+    end
+    vim.defer_fn(function() vim.cmd("edit") end, 500)
   end, opts)
 
   -- enable diagnosts for warn/error only
