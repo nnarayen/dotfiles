@@ -32,11 +32,13 @@ usage = { version = "latest" }
 neovim = { version = "latest" }
 rclone = { version = "latest" }
 tmux = { version = "latest" }
+"github:rtk-ai/rtk" = { version = "latest" }
+claude = { version = "latest" }
+yq = { version = "latest" }
 
 # LSP / Languages
 lua-language-server = { version = "latest" }
 "github:astral-sh/ty" = { version = "latest" }
-
 
 [tool_alias]
 ty = "github:astral-sh/ty"
