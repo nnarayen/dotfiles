@@ -51,9 +51,7 @@ function M.config()
         claude_code = function()
           return adapters.extend("claude_code", {
             defaults = {
-              model = function(self)
-                return "opus"
-              end,
+              model = "opus",
             },
             env = {
               CLAUDE_CODE_OAUTH_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN",
