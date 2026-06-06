@@ -5,7 +5,16 @@ local M = {
 
 function M.config()
   require("render-markdown").setup({
-    file_types = { "markdown", "codecompanion", "Avante" },
+    file_types = { "markdown", "codecompanion" },
+    heading = {
+      enabled = true,
+      icons = { "󰼏  ", "󰎨  ", "󰼑  ", "󰎲  ", "󰼓  ", "󰎴  " },
+      left_pad = 1,
+      right_pad = 1,
+    },
+    anti_conceal = {
+      enabled = false
+    },
   })
 end
 

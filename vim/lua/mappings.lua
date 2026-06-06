@@ -45,9 +45,11 @@ vim.api.nvim_create_autocmd("BufEnter", {
   end,
 })
 
--- Copy relative/absolute file paths
-map("n", "<LocalLeader>u", ":let @+=expand('%')<CR>", default_options)
-map("n", "<LocalLeader>U", ":let @+=expand('%:p')<CR>", default_options)
+-- Copy relative
+vim.keymap.set("n", "<LocalLeader>u", function()
+  local path = vim.fs.relpath(vim.uv.cwd(), vim.api.nvim_buf_get_name(0))
+  vim.fn.setreg("+", path)
+end, { desc = "Copy relative file path" })
 
 -- Command typos
 vim.cmd("cnoreabbrev W w")

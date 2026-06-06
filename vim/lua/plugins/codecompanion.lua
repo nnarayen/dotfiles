@@ -46,7 +46,11 @@ function M.config()
       acp = {
         opts = { show_presets = false },
         opencode = function()
-          return adapters.extend("opencode", {})
+          return adapters.extend("opencode", {
+            defaults = {
+              model = "baseten/moonshotai/Kimi-K2.6",
+            },
+          })
         end,
         claude_code = function()
           return adapters.extend("claude_code", {

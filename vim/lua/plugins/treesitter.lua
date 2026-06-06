@@ -1,9 +1,11 @@
 local M = {
   "nvim-treesitter/nvim-treesitter",
+  branch = "main",
+  lazy = false,
   build = ":TSUpdate",
   enabled = true,
   dependencies = {
-    "nvim-treesitter/nvim-treesitter-textobjects",
+    { "nvim-treesitter/nvim-treesitter-textobjects", branch = "main" },
   },
 }
 
@@ -24,30 +26,43 @@ function M.config()
     "yaml",
   })
 
-  -- Enable treesitter highlighting for buffers with an installed parser
+  -- Highlighting: start treesitter for any buffer whose parser is installed.
   vim.api.nvim_create_autocmd("FileType", {
+    group = vim.api.nvim_create_augroup("treesitter_start", { clear = true }),
     callback = function(args)
       local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
-      if lang and vim.treesitter.language.add(lang) then
-        vim.treesitter.start(args.buf)
+      if not lang then
+        return
+      end
+      local ok, added = pcall(vim.treesitter.language.add, lang)
+      if ok and added then
+        vim.treesitter.start(args.buf, lang)
       end
     end,
   })
 
-  -- Textobjects
   require("nvim-treesitter-textobjects").setup({
-    swap = {
-      enable = true,
-      swap_next = { ["gl"] = "@parameter.inner" },
-      swap_previous = { ["gh"] = "@parameter.inner" },
-    },
-    move = {
-      enable = true,
-      set_jumps = true,
-      goto_next_start = { ["gF"] = "@function.outer" },
-      goto_previous_start = { ["gf"] = "@function.outer" },
-    },
+    move = { set_jumps = true },
   })
+
+  local swap = require("nvim-treesitter-textobjects.swap")
+  local move = require("nvim-treesitter-textobjects.move")
+
+  -- Swap parameters
+  vim.keymap.set("n", "gl", function()
+    swap.swap_next("@parameter.inner")
+  end, { desc = "Swap with next parameter" })
+  vim.keymap.set("n", "gh", function()
+    swap.swap_previous("@parameter.inner")
+  end, { desc = "Swap with previous parameter" })
+
+  -- Move between functions
+  vim.keymap.set({ "n", "x", "o" }, "gF", function()
+    move.goto_next_start("@function.outer", "textobjects")
+  end, { desc = "Next function start" })
+  vim.keymap.set({ "n", "x", "o" }, "gf", function()
+    move.goto_previous_start("@function.outer", "textobjects")
+  end, { desc = "Previous function start" })
 end
 
 return M
