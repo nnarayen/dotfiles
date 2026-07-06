@@ -37,7 +37,7 @@ function M.config()
             },
             schema = {
               model = {
-                default = "moonshotai/Kimi-K2.5",
+                default = "zai-org/GLM-5.1",
               },
             },
           })
@@ -85,7 +85,7 @@ function M.config()
             opts = { provider = "fzf_lua", },
           },
         },
-        adapter = "baseten",
+        adapter = "claude_code",
       },
       inline = { adapter = "anthropic" },
     },
